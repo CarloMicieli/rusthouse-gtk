@@ -1,0 +1,20 @@
+# Ignore the target directory (Cargo build output)
+target/
+
+# Ignore Cargo.lock for libraries (optional, keep for binaries)
+# Cargo.lock
+
+# Ignore backup and temporary files
+**/*.rs.bk
+*.swp
+*.swo
+*~
+
+# Ignore IDE/editor settings
+.idea/
+.vscode/
+*.iml
+
+# Ignore coverage/debug/test output
+coverage/
+debug/

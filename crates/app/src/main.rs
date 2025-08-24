@@ -1,3 +1,4 @@
 fn main() {
-    println!("Hello, world!");
+    let str1 = catalog::catalog_function();
+    println!("{}", str1);
 }

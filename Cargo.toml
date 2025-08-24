@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/app",
+    "crates/libs/catalog",
 ]
 resolver = "2"
 
@@ -13,4 +14,3 @@ readme          = "README.md"
 repository      = "https://github.com/CarloMicieli/rusthouse-gtk"
 rust-version    = "1.89"
 version         = "0.1.0"
-

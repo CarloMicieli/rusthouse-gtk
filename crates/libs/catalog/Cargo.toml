@@ -1,5 +1,5 @@
 [package]
-name = "app"
+name = "catalog"
 
 authors      = { workspace = true }
 edition      = { workspace = true }
@@ -7,9 +7,7 @@ license      = { workspace = true }
 rust-version = { workspace = true }
 version      = { workspace = true }
 
-[[bin]]
-path = "src/main.rs"
-name = "rusthouse"
+[lib]
+path = "src/lib.rs"
 
 [dependencies]
-catalog         = { path = "../libs/catalog" }

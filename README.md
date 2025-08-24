@@ -1,5 +1,9 @@
 # RustHouse
 
+<div align="center">
+  <img src="assets/logo.png" alt="Project Logo" />
+</div>
+
 RustHouse is a GTK4-based desktop application for model railway collectors to organize their collections and wish lists. It runs on Linux and Windows, using an SQLite database for local data storage. The application enables users to manage detailed information about models, rolling stock, manufacturers, shops, and wish lists, with features for searching, filtering, and importing/exporting data.
 
 ## Features

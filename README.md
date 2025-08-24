@@ -1,5 +1,9 @@
 # RustHouse
 
+![license](https://img.shields.io/github/license/CarloMicieli/rusthouse-gtk)
+![GitHub last commit](https://img.shields.io/github/last-commit/CarloMicieli/rusthouse-gtk)
+[![CI (Rust)](https://github.com/CarloMicieli/rusthouse-gtk/actions/workflows/ci.yml/badge.svg)](https://github.com/CarloMicieli/rusthouse-gtk/actions/workflows/ci.yml)
+
 <div align="center">
   <img src="assets/logo.png" alt="Project Logo" />
 </div>

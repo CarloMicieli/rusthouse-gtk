@@ -1,4 +1,5 @@
 fn main() {
     let str1 = catalog::catalog_function();
-    println!("{}", str1);
+    let str2 = collecting::collecting_function();
+    println!("{str1} {str2}");
 }

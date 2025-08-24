@@ -2,6 +2,7 @@
 members = [
     "crates/app",
     "crates/libs/catalog",
+    "crates/libs/collecting",
 ]
 resolver = "2"
 

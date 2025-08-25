@@ -81,11 +81,16 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 - **Manufacturer:** Describes a company that produces model railway items. Includes company details, contact information, and business status.
 
-- **Railway Model:** Represents a specific product made by a manufacturer, identified by product code, scale, and descriptive details. Each model can include one or more rolling stock items.
+- **Railway Model:** Represents a specific product made by a manufacturer, identified by product code, scale, descriptive details, and power method. Each model can include one or more rolling stock items. All rolling stock for a model shares the same power method, which can be one of: AC (alternate current), DC (direct current), or Trix express. Each railway model has a category, which can be one of: locomotive, freight car, passenger car, electric multiple unit, railcar, train set, or starter set.
 
 - **Scale:** Defines the modeling scale (e.g., H0, N, Z) and associated properties such as ratio and track gauge.
 
-- **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, or train set) that is part of a model. Includes details like category, railway company, and physical attributes.
+- **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, electric multiple unit, or railcar) that is part of a model. Includes details like category, railway company, and physical attributes. The rolling stock category can be one of: locomotive, freight car, passenger car, electric multiple unit, or railcar.
+
+  - For **locomotives**, **railcars**, and **electric multiple units**: includes type (for locomotives: diesel, steam, electric; for railcars and EMUs: power car, trailer car), depot name, livery, series, control (no DCC, DCC ready, DCC fitted, DCC sound), and socket type (one of: NONE, NEM_355, NEM_356, NEM_357, NEM_359, NEM_360, NEM_362, NEM_365) for digital decoder. Also includes coupler properties: whether the model mounts a close coupler (`has_close_coupler`), has a standard coupler socket (`has_standard_coupler_socket`), or has a digital controller coupler (`has_digital_controller_coupler`).
+  - For **passenger cars**: includes passenger car type (one of: baggage cars, combine cars, compartment coaches, dining cars, double deckers, driving trailers, lounges, observation cars, open coaches, railway post offices, sleeping cars), livery, and service level (first class, second class, third class).
+  - For **freight cars**: includes freight car type (one of: auto transport cars, brake wagons, container cars, covered freight cars, deep well flat cars, dump cars, gondolas, heavy goods wagons, hinged cover wagons, hopper wagons, refrigerator cars, silo container cars, slide tarpaulin wagons, sliding wall boxcars, special transport cars, stake wagons, swing roof wagons, tank cars, telescope hood wagons) and livery.
+  - For all rolling stock: optional body shell type and chassis type (allowed values: metal die cast, plastic).
 
 - **Railway Company:** Describes a real-world railway company, including its name, country, status, and contact information.
 
@@ -250,6 +255,8 @@ RailwayModel(
     delivery_date TEXT,           -- optional, month or quarter
     delivery_state TEXT,          -- enum: Announced, Available, Cancelled, Unknown
     scale_id INTEGER NOT NULL REFERENCES Scale(id),
+    power_method TEXT NOT NULL,   -- enum: AC, DC, Trix express
+    category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar, Train Set, Starter Set
     -- Rolling stock is in a separate table
     UNIQUE(manufacturer_id, product_code),
     created_at TEXT NOT NULL,     -- creation timestamp (ISO 8601)
@@ -260,7 +267,7 @@ RailwayModel(
 RollingStock(
     id INTEGER PRIMARY KEY,
     model_id INTEGER NOT NULL REFERENCES RailwayModel(id),
-    category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car
+    category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar
     railway_company_id INTEGER NOT NULL REFERENCES RailwayCompany(id),
     length REAL NOT NULL,         -- cm/mm/in
     era TEXT NOT NULL,            -- string/enum
@@ -268,6 +275,23 @@ RollingStock(
     road_number TEXT,             -- optional
     description TEXT,             -- optional
     details TEXT,                 -- optional, rich text
+    -- Category-specific fields:
+    locomotive_type TEXT,         -- enum: Diesel, Steam, Electric (locomotives only)
+    depot_name TEXT,              -- locomotives, railcars, EMUs
+    livery TEXT,                  -- all categories
+    series TEXT,                  -- locomotives, railcars, EMUs
+    control TEXT,                 -- enum: No DCC, DCC Ready, DCC Fitted, DCC Sound (locomotives, railcars, EMUs)
+    socket_type TEXT,             -- enum: NONE, NEM_355, NEM_356, NEM_357, NEM_359, NEM_360, NEM_362, NEM_365 (locomotives, railcars, EMUs)
+    has_close_coupler BOOLEAN,    -- true if mounts a close coupler
+    has_standard_coupler_socket BOOLEAN, -- true if has a standard coupler socket
+    has_digital_controller_coupler BOOLEAN, -- true if has a digital controller coupler
+    railcar_type TEXT,            -- enum: Power Car, Trailer Car (railcars only)
+    emu_type TEXT,                -- enum: Power Car, Trailer Car (EMUs only)
+    passenger_car_type TEXT,      -- passenger cars only
+    service_level TEXT,           -- enum: First Class, Second Class, Third Class (passenger cars only)
+    freight_car_type TEXT,        -- freight cars only
+    body_shell_type TEXT,         -- enum: metal die cast, plastic (optional, all categories)
+    chassis_type TEXT,            -- enum: metal die cast, plastic (optional, all categories)
     created_at TEXT NOT NULL,     -- creation timestamp (ISO 8601)
     last_modified_at TEXT,        -- last change timestamp (ISO 8601, optional)
     version INTEGER NOT NULL DEFAULT 1

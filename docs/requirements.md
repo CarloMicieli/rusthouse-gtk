@@ -79,28 +79,28 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 - **Collector:** Represents the owner of the collection and wish lists. Each collector manages a single personal collection and can create multiple wish lists. Collectors can define preferences such as preferred currency, system of measure, favourite scales, favourite railway companies, and favourite eras.
 
-- **Manufacturer:** Describes a company that produces model railway items. Includes company details, contact information, and business status.
+- **Manufacturer:** Describes a company that produces model railway items. Includes company details, contact information, and business status. **ID format:** `urn:manufacturer:{name}` (URL-encoded).
 
-- **Railway Model:** Represents a specific product made by a manufacturer, identified by product code, scale, descriptive details, and power method. Each model can include one or more rolling stock items. All rolling stock for a model shares the same power method, which can be one of: AC (alternate current), DC (direct current), or Trix express. Each railway model has a category, which can be one of: locomotive, freight car, passenger car, electric multiple unit, railcar, train set, or starter set.
+- **Railway Model:** Represents a specific product made by a manufacturer, identified by product code, scale, descriptive details, and power method. Each model can include one or more rolling stock items. All rolling stock for a model shares the same power method, which can be one of: AC (alternate current), DC (direct current), or Trix express. Each railway model has a category, which can be one of: locomotive, freight car, passenger car, electric multiple unit, railcar, train set, or starter set. **ID format:** `urn:model:{manufacturer name}-{product code}` (URL-encoded).
 
-- **Scale:** Defines the modeling scale (e.g., H0, N, Z) and associated properties such as ratio and track gauge.
+- **Scale:** Defines the modeling scale (e.g., H0, N, Z) and associated properties such as ratio and track gauge. **ID format:** `urn:scale:{name}` (URL-encoded).
 
-- **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, electric multiple unit, or railcar) that is part of a model. Includes details like category, railway company, and physical attributes. The rolling stock category can be one of: locomotive, freight car, passenger car, electric multiple unit, or railcar.
+- **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, electric multiple unit, or railcar) that is part of a model. Includes details like category, railway company, and physical attributes. The rolling stock category can be one of: locomotive, freight car, passenger car, electric multiple unit, or railcar. **ID format:** `urn:rollingstock:{model_urn}-{road_number}` (URL-encoded).
 
   - For **locomotives**, **railcars**, and **electric multiple units**: includes type (for locomotives: diesel, steam, electric; for railcars and EMUs: power car, trailer car), depot name, livery, series, control (no DCC, DCC ready, DCC fitted, DCC sound), and socket type (one of: NONE, NEM_355, NEM_356, NEM_357, NEM_359, NEM_360, NEM_362, NEM_365) for digital decoder. Also includes coupler properties: whether the model mounts a close coupler (`has_close_coupler`), has a standard coupler socket (`has_standard_coupler_socket`), or has a digital controller coupler (`has_digital_controller_coupler`).
   - For **passenger cars**: includes passenger car type (one of: baggage cars, combine cars, compartment coaches, dining cars, double deckers, driving trailers, lounges, observation cars, open coaches, railway post offices, sleeping cars), livery, and service level (first class, second class, third class).
   - For **freight cars**: includes freight car type (one of: auto transport cars, brake wagons, container cars, covered freight cars, deep well flat cars, dump cars, gondolas, heavy goods wagons, hinged cover wagons, hopper wagons, refrigerator cars, silo container cars, slide tarpaulin wagons, sliding wall boxcars, special transport cars, stake wagons, swing roof wagons, tank cars, telescope hood wagons) and livery.
   - For all rolling stock: optional body shell type and chassis type (allowed values: metal die cast, plastic).
 
-- **Railway Company:** Describes a real-world railway company, including its name, country, status, and contact information.
+- **Railway Company:** Describes a real-world railway company, including its name, country, status, and contact information. **ID format:** `urn:railway:{name}` (URL-encoded).
 
-- **Shop:** Represents a retailer or vendor where models can be purchased or are desired. Includes contact and location details. Shops can be managed independently and marked as favourites by the user.
+- **Shop:** Represents a retailer or vendor where models can be purchased or are desired. Includes contact and location details. Shops can be managed independently and marked as favourites by the user. **ID format:** `urn:shop:{name}` (URL-encoded).
 
 - **Favourite Shops:** Represents the user's preferred shops for purchases, allowing quick access and management. Each collector can have multiple favourite shops.
 
 - **Collection & Collection Items:** The collection is the set of models owned by the collector. Each collection item records ownership details, purchase information, and links to the model and shop.
 
-- **Wish List & Wish List Items:** Wish lists are named lists of models the collector wants to acquire. Each wish list item records a desired model, optional target price, and shop, and is linked to a specific wish list.
+- **Wish List & Wish List Items:** Wish lists are named lists of models the collector wants to acquire. Each wish list item records a desired model, optional target price, and shop, and is linked to a specific wish list. **Wish List ID format:** `urn:wishlist:{name}` (URL-encoded).
 
 ---
 
@@ -193,7 +193,7 @@ Collector(
 )
 
 Scale(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- URN: urn:scale:{name}
     name TEXT NOT NULL,           -- e.g., H0, N, Z, O, G
     ratio TEXT NOT NULL,          -- e.g., 1:87, 1:160
     track_gauge TEXT NOT NULL,    -- enum: Standard, Narrow
@@ -205,7 +205,7 @@ Scale(
 )
 
 RailwayCompany(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- URN: urn:railway:{name}
     name TEXT NOT NULL,
     country TEXT NOT NULL,
     status TEXT NOT NULL,            -- enum: Active, Inactive
@@ -222,7 +222,7 @@ RailwayCompany(
 )
 
 Manufacturer(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- URN: urn:manufacturer:{name}
     name TEXT NOT NULL,
     registered_company_name TEXT, -- optional
     kind TEXT,                   -- enum: Industrial, Brass Metal Models
@@ -246,15 +246,15 @@ Manufacturer(
 )
 
 RailwayModel(
-    id INTEGER PRIMARY KEY,
-    manufacturer_id INTEGER NOT NULL REFERENCES Manufacturer(id),
+    id TEXT PRIMARY KEY,                -- URN: urn:model:{manufacturer name}-{product code}
+    manufacturer_id TEXT NOT NULL REFERENCES Manufacturer(id),
     product_code TEXT NOT NULL,
     description TEXT NOT NULL,
     detailed_description TEXT,    -- optional
     details TEXT,                 -- optional, rich text
     delivery_date TEXT,           -- optional, month or quarter
     delivery_state TEXT,          -- enum: Announced, Available, Cancelled, Unknown
-    scale_id INTEGER NOT NULL REFERENCES Scale(id),
+    scale_id TEXT NOT NULL REFERENCES Scale(id),
     power_method TEXT NOT NULL,   -- enum: AC, DC, Trix express
     category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar, Train Set, Starter Set
     -- Rolling stock is in a separate table
@@ -265,10 +265,10 @@ RailwayModel(
 )
 
 RollingStock(
-    id INTEGER PRIMARY KEY,
-    model_id INTEGER NOT NULL REFERENCES RailwayModel(id),
+    id TEXT PRIMARY KEY, // URN: urn:rollingstock:{model_urn}-{road_number} or similar, see note below
+    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar
-    railway_company_id INTEGER NOT NULL REFERENCES RailwayCompany(id),
+    railway_company_id TEXT NOT NULL REFERENCES RailwayCompany(id),
     length REAL NOT NULL,         -- cm/mm/in
     era TEXT NOT NULL,            -- string/enum
     road_name TEXT NOT NULL,
@@ -298,7 +298,7 @@ RollingStock(
 )
 
 WishList(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- URN: urn:wishlist:{name}
     name TEXT NOT NULL,                -- name of the wish list
     created_at TEXT NOT NULL,          -- creation timestamp (ISO 8601)
     last_modified_at TEXT,             -- last change timestamp (ISO 8601, optional)
@@ -307,28 +307,28 @@ WishList(
 
 CollectionItem(
     id INTEGER PRIMARY KEY,
-    model_id INTEGER NOT NULL REFERENCES RailwayModel(id),
+    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     price REAL NOT NULL,          -- numeric, currency
     currency TEXT,                -- optional, ISO 4217 currency code (e.g., EUR, USD)
-    shop_id INTEGER REFERENCES Shop(id), -- optional, foreign key to Shop
+    shop_id TEXT REFERENCES Shop(id), -- optional, foreign key to Shop (URN)
     added_at TEXT NOT NULL,       -- when added to collection (ISO 8601)
     removed_at TEXT               -- when removed from collection (ISO 8601, optional)
 )
 
 WishListItem(
     id INTEGER PRIMARY KEY,
-    wishlist_id INTEGER NOT NULL REFERENCES WishList(id),
-    model_id INTEGER NOT NULL REFERENCES RailwayModel(id),
+    wishlist_id TEXT NOT NULL REFERENCES WishList(id),
+    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     desired_price REAL,           -- optional, currency
     currency TEXT,                -- optional, ISO 4217 currency code (e.g., EUR, USD)
-    shop_id INTEGER REFERENCES Shop(id), -- optional, foreign key to Shop
+    shop_id TEXT REFERENCES Shop(id), -- optional, foreign key to Shop (URN)
     wish_list_name TEXT,          -- denormalized for display, optional; must be kept in sync with WishList.name
     added_at TEXT NOT NULL,       -- when added to wishlist (ISO 8601)
     removed_at TEXT               -- when removed from wishlist (ISO 8601, optional)
 )
 
 Shop(
-    id INTEGER PRIMARY KEY,
+    id TEXT PRIMARY KEY,                -- URN: urn:shop:{name}
     name TEXT NOT NULL,
     email TEXT,                  -- optional
     website_url TEXT,            -- optional
@@ -341,7 +341,7 @@ Shop(
 FavouriteShop(
     id INTEGER PRIMARY KEY,
     collector_id INTEGER NOT NULL REFERENCES Collector(id),
-    shop_id INTEGER NOT NULL REFERENCES Shop(id),
+    shop_id TEXT NOT NULL REFERENCES Shop(id),
     created_at TEXT NOT NULL, -- when marked as favourite
     UNIQUE(collector_id, shop_id)
 )

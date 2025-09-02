@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RailwayCompany",
+  "type": "object",
+  "required": [
+    "name",
+    "abbreviation",
+    "country",
+    "country_code",
+    "status",
+    "full_registered_name",
+    "company_type",
+    "founded_year",
+    "defunct_year",
+    "website"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The common name of the railway company."
+    },
+    "abbreviation": {
+      "type": "string",
+      "description": "The abbreviation or short code for the company."
+    },
+    "country": {
+      "type": "string",
+      "description": "The country where the company operates."
+    },
+    "country_code": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2,
+      "description": "ISO 3166-1 alpha-2 country code."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "defunct"],
+      "description": "Whether the company is currently active or defunct."
+    },
+    "full_registered_name": {
+      "type": "string",
+      "description": "The full legal or registered name of the company."
+    },
+    "company_type": {
+      "type": "string",
+      "description": "Type of company (e.g., state-owned, private, freight, passenger, etc.)."
+    },
+    "founded_year": {
+      "type": "integer",
+      "minimum": 1800,
+      "maximum": 2100,
+      "description": "Year the company was founded."
+    },
+    "defunct_year": {
+      "type": ["integer", "null"],
+      "minimum": 1800,
+      "maximum": 2100,
+      "description": "Year the company became defunct, or null if still active."
+    },
+    "website": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Official website URL, or null if not available."
+    }
+  },
+  "additionalProperties": false
+}
+

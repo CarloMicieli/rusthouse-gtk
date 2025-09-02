@@ -1,0 +1,359 @@
+[
+  {
+    "name": "Märklin",
+    "company_name": "Gebr. Märklin & Cie. GmbH",
+    "country": "Germany",
+    "country_code": "DE",
+    "postal_address": "Stuttgarter Str. 55–57, D‑73033 Göppingen, Germany",
+    "website_url": "https://www.maerklin.de/",
+    "social": {
+      "youtube": "https://www.youtube.com/channel/UCB-OmGaVsGnWkUFtRGIryKA",
+      "x_twitter": "https://twitter.com/marklin_",
+      "linkedin": null,
+      "facebook": "https://www.facebook.com/maerklin",
+      "instagram": "https://www.instagram.com/maerklin/"
+    },
+    "scales": [
+      "H0",
+      "Z",
+      "1",
+      "G (via LGB)"
+    ]
+  },
+  {
+    "name": "ROCO",
+    "company_name": "Modelleisenbahn GmbH",
+    "country": "Austria",
+    "group": "Modelleisenbahn Holding",
+    "country_code": "AT",
+    "postal_address": "Group HQ in Bergheim near Salzburg, Austria",
+    "website_url": "https://www.roco.cc/",
+    "social": {
+      "youtube": "https://www.youtube.com/RocoModellbahnen",
+      "x_twitter": null,
+      "linkedin": "https://www.linkedin.com/company/modelleisenbahn-gmbh/",
+      "facebook": "https://www.facebook.com/roco.cc",
+      "instagram": "https://www.instagram.com/rococc/"
+    },
+    "scales": [
+      "H0",
+      "N",
+      "TT (historical/limited)"
+    ]
+  },
+  {
+    "name": "Fleischmann",
+    "company_name": "Gebr. Fleischmann GmbH",
+    "country": "Germany",
+    "group": "Modelleisenbahn Holding",
+    "country_code": "DE",
+    "postal_address": "Heilsbronn, Germany",
+    "website_url": "https://www.fleischmann.de/",
+    "social": {
+      "youtube": "https://www.youtube.com/FleischmannDE",
+      "x_twitter": null,
+      "linkedin": "https://www.linkedin.com/company/modelleisenbahn-gmbh/",
+      "facebook": "https://www.facebook.com/Fleischmann.de",
+      "instagram": "https://www.instagram.com/fleischmannde/"
+    },
+    "scales": [
+      "N",
+      "H0"
+    ]
+  },
+  {
+    "name": "PIKO",
+    "company_name": "PIKO Spielwaren GmbH",
+    "country": "Germany",
+    "group": null,
+    "country_code": "DE",
+    "postal_address": "Lutherstraße 30, 96515 Sonneberg, Germany",
+    "website_url": "https://www.piko.de/",
+    "social": {
+      "youtube": "https://www.youtube.com/c/pikoamerica",
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": "https://www.instagram.com/piko.modellbahn/"
+    },
+    "scales": [
+      "G",
+      "H0",
+      "TT",
+      "N"
+    ]
+  },
+  {
+    "name": "Hornby",
+    "company_name": "Hornby Hobbies Ltd",
+    "country": "United Kingdom",
+    "group": "Hornby Group",
+    "country_code": "GB",
+    "postal_address": "Enterprise Road, Westwood Industrial Estate, Margate, CT9 4JX, United Kingdom",
+    "website_url": "https://www.hornby.com/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "OO (1:76)",
+      "TT:120",
+      "OO9",
+      "O (via sub‑brands)",
+      "HO (via Rivarossi/Jouef)"
+    ]
+  },
+  {
+    "name": "Bachmann",
+    "company_name": "Bachmann Europe plc",
+    "country": "United Kingdom",
+    "group": null,
+    "country_code": "GB",
+    "postal_address": "Moat Way, Barwell, Leicestershire LE9 8EY, United Kingdom",
+    "website_url": "https://www.bachmann.co.uk/",
+    "social": {
+      "youtube": "https://www.youtube.com/@BachmannEuropeOfficial",
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": "https://www.facebook.com/bachmanneurope/",
+      "instagram": null
+    },
+    "scales": [
+      "OO",
+      "N (Graham Farish)",
+      "HO"
+    ]
+  },
+  {
+    "name": "TILLIG",
+    "company_name": "TILLIG Modellbahnen GmbH & Co. KG",
+    "country": "Germany",
+    "group": null,
+    "country_code": "DE",
+    "postal_address": "Promenade 1, 01855 Sebnitz, Germany",
+    "website_url": "https://www.tillig.com/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "TT",
+      "H0",
+      "H0m",
+      "H0e"
+    ]
+  },
+  {
+    "name": "Brawa",
+    "company_name": "Brawa Artur Braun Modellspielwarenfabrik GmbH & Co. KG",
+    "country": "Germany",
+    "group": null,
+    "country_code": "DE",
+    "postal_address": "Remshalden, Germany",
+    "website_url": "https://www.brawa.de/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "HO",
+      "N",
+      "TT",
+      "Z",
+      "accessories"
+    ]
+  },
+  {
+    "name": "LS Models",
+    "company_name": "LS MODELS EXCLUSIVE SRL",
+    "country": "Belgium",
+    "group": null,
+    "country_code": "BE",
+    "postal_address": "Rue Bosfagnes 31, B‑4950 Sourbrodt, Belgium",
+    "website_url": "https://www.lsmodels.com/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "H0",
+      "TT",
+      "N"
+    ]
+  },
+  {
+    "name": "A.C.M.E.",
+    "company_name": "Anonima Costruzioni Modellistiche Esatte",
+    "country": "Italy",
+    "group": null,
+    "country_code": "IT",
+    "postal_address": "Via Belluno, 24, 20132 Milano (MI), Italy",
+    "website_url": "https://www.acmetreni.it/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": "https://www.instagram.com/popular/acme-treni/"
+    },
+    "scales": [
+      "H0 (1:87) — highly accurate Italian prototypes"
+    ]
+  },
+  {
+    "name": "Rivarossi",
+    "company_name": "Hornby plc (brand heritage: Italy)",
+    "country": "Italy (brand heritage, now under UK ownership)",
+    "group": "Hornby Group",
+    "country_code": "IT",
+    "postal_address": null,
+    "website_url": "https://uk.rivarossi.com/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "HO"
+    ]
+  },
+  {
+    "name": "Jouef",
+    "company_name": "Hornby plc (brand heritage: France)",
+    "country": "France (brand heritage; now under UK ownership)",
+    "group": "Hornby Group",
+    "country_code": "FR",
+    "postal_address": "31, rue des Longs Prés, Boulogne‑Billancourt, France",
+    "website_url": "https://fr.jouef.com/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "H0 (1:87)"
+    ]
+  },
+  {
+    "name": "Electrotren",
+    "company_name": "Hornby plc (brand heritage: Spain)",
+    "country": "Spain",
+    "group": "Hornby Group",
+    "country_code": "ES",
+    "postal_address": "Via Hornby Italia Srl, Viale dei Caduti, 52/A6, 25030 Castel Mella (BS), Italy (Hornby contact details)",
+    "website_url": "https://www.uk.hornby.com/brands/Electrotren",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "H0 (Spanish RENFE models)"
+    ]
+  },
+  {
+    "name": "Bemo",
+    "company_name": "Bemo Modelleisenbahnen GmbH",
+    "country": "Germany",
+    "group": null,
+    "country_code": "DE",
+    "postal_address": "Uhingen, Germany",
+    "website_url": "https://www.bemo-modellbahn.de/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "H0m",
+      "H0e",
+      "0m (1:43.5)",
+      "H0",
+      "N"
+    ]
+  },
+  {
+    "name": "Ibertren",
+    "company_name": "Ibertren",
+    "country": "Spain",
+    "group": null,
+    "country_code": "ES",
+    "postal_address": "Barcelona, Spain",
+    "website_url": "http://www.ibertren.es/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "N (2N and 3N series)",
+      "H0 (limited)"
+    ]
+  },
+  {
+    "name": "Lemaco",
+    "company_name": "Lematec / Lemaco SA",
+    "country": "Switzerland",
+    "group": null,
+    "country_code": "CH",
+    "postal_address": "Ecublens, Canton of Vaud, Switzerland",
+    "website_url": "https://www.lematec.ch/",
+    "social": {
+      "youtube": null,
+      "x_twitter": null,
+      "linkedin": null,
+      "facebook": null,
+      "instagram": null
+    },
+    "scales": [
+      "HO",
+      "O",
+      "N",
+      "1 gauge",
+      "2 gauge",
+      "brass models"
+    ]
+  },
+  {
+    "name": "Kato",
+    "company_name": "Kato Precision Railroad Models (K.K. Sekisui Kinzoku)",
+    "country": "Japan",
+    "group": null,
+    "country_code": "JP",
+    "postal_address": "4-3-6, Kamiyamada, Chikuma-shi, Nagano-ken 389-0821, Japan",
+    "website_url": "https://www.katomodels.com/",
+    "social": {
+      "youtube": "https://www.youtube.com/user/katomodels",
+      "x_twitter": "https://twitter.com/katomodels",
+      "linkedin": null,
+      "facebook": "https://www.facebook.com/katomodels/",
+      "instagram": "https://www.instagram.com/katomodels/"
+    },
+    "scales": [
+      "N",
+      "HO"
+    ]
+  }
+]

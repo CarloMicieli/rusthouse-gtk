@@ -1,0 +1,312 @@
+[
+  {
+    "name": "T",
+    "code": "T",
+    "ratio": "1:450",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 3,
+    "track_gauge_in": 0.118,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "Z",
+    "code": "Z",
+    "ratio": "1:220",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 6.5,
+    "track_gauge_in": 0.256,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "N",
+    "code": "N",
+    "ratio": "1:160",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "N (Japan)",
+    "code": "N_JP",
+    "ratio": "1:150",
+    "standards": [
+      "NEM",
+      "JMRA"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "TT",
+    "code": "TT",
+    "ratio": "1:120",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 12,
+    "track_gauge_in": 0.472,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "H0",
+    "code": "H0",
+    "ratio": "1:87",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 16.5,
+    "track_gauge_in": 0.65,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "HO (Japan)",
+    "code": "HO_JP",
+    "ratio": "1:80",
+    "standards": [
+      "JMRA"
+    ],
+    "track_gauge_mm": 16.5,
+    "track_gauge_in": 0.65,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "00",
+    "code": "00",
+    "ratio": "1:76.2",
+    "standards": [
+      "NEM",
+      "BRMSB"
+    ],
+    "track_gauge_mm": 16.5,
+    "track_gauge_in": 0.65,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "S",
+    "code": "S",
+    "ratio": "1:64",
+    "standards": [
+      "NMRA",
+      "NEM"
+    ],
+    "track_gauge_mm": 22.48,
+    "track_gauge_in": 0.885,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "0",
+    "code": "0",
+    "ratio": "1:45",
+    "standards": [
+      "NEM"
+    ],
+    "track_gauge_mm": 32,
+    "track_gauge_in": 1.26,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "0 (US)",
+    "code": "0_US",
+    "ratio": "1:48",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 32,
+    "track_gauge_in": 1.26,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "0 (UK)",
+    "code": "0_UK",
+    "ratio": "1:43.5",
+    "standards": [
+      "BRMSB"
+    ],
+    "track_gauge_mm": 32,
+    "track_gauge_in": 1.26,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "Gauge 1",
+    "code": "1",
+    "ratio": "1:32",
+    "standards": [
+      "G1MRA",
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 45,
+    "track_gauge_in": 1.772,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "G / IIm (meter-gauge prototype)",
+    "code": "IIm",
+    "ratio": "1:22.5",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 45,
+    "track_gauge_in": 1.772,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "1:29 (Large Scale standard-gauge on 45 mm)",
+    "code": "1:29",
+    "ratio": "1:29",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 45,
+    "track_gauge_in": 1.772,
+    "track_gauge_type": "STANDARD"
+  },
+  {
+    "name": "Fn3 (F scale 3-ft narrow gauge)",
+    "code": "Fn3",
+    "ratio": "1:20.3",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 45,
+    "track_gauge_in": 1.772,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "H0m (meter gauge)",
+    "code": "H0m",
+    "ratio": "1:87",
+    "standards": [
+      "NEM",
+      "NMRA"
+    ],
+    "track_gauge_mm": 12,
+    "track_gauge_in": 0.472,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "H0e (750–760 mm / 2 ft 6 in)",
+    "code": "H0e",
+    "ratio": "1:87",
+    "standards": [
+      "NEM"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "H0n3 (3-ft narrow gauge)",
+    "code": "H0n3",
+    "ratio": "1:87",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 10.5,
+    "track_gauge_in": 0.413,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "H0n30 / H0n2½ (approx. 30 in / 2–2½ ft using N track)",
+    "code": "H0n30",
+    "ratio": "1:87",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "H0f (600 mm industrial using Z track)",
+    "code": "H0f",
+    "ratio": "1:87",
+    "standards": [
+      "NEM"
+    ],
+    "track_gauge_mm": 6.5,
+    "track_gauge_in": 0.256,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "009 / 0-0-9 (British NG on N track)",
+    "code": "009",
+    "ratio": "1:76.2",
+    "standards": [
+      "NEM",
+      "BRMSB"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "On30 (30 in on HO track)",
+    "code": "On30",
+    "ratio": "1:48",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 16.5,
+    "track_gauge_in": 0.65,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "On3 (3-ft narrow gauge)",
+    "code": "On3",
+    "ratio": "1:48",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 19.05,
+    "track_gauge_in": 0.750,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "On2 (2-ft narrow gauge)",
+    "code": "On2",
+    "ratio": "1:48",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 12.7,
+    "track_gauge_in": 0.5,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "Nn3 (3-ft narrow gauge using Z track)",
+    "code": "Nn3",
+    "ratio": "1:160",
+    "standards": [
+      "NMRA"
+    ],
+    "track_gauge_mm": 6.5,
+    "track_gauge_in": 0.256,
+    "track_gauge_type": "NARROW"
+  },
+  {
+    "name": "TTm (meter-gauge using N track)",
+    "code": "TTm",
+    "ratio": "1:120",
+    "standards": [
+      "NEM"
+    ],
+    "track_gauge_mm": 9,
+    "track_gauge_in": 0.354,
+    "track_gauge_type": "NARROW"
+  }
+]

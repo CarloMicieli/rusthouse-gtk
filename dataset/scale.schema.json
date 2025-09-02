@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scale",
+  "type": "object",
+  "required": [
+    "name",
+    "code",
+    "ratio",
+    "standards",
+    "track_gauge_mm",
+    "track_gauge_in",
+    "track_gauge_type"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the scale (e.g., 'N', 'H0', 'N (Japan)')."
+    },
+    "code": {
+      "type": "string",
+      "description": "Short code for the scale (e.g., 'N', 'H0', 'N_JP')."
+    },
+    "ratio": {
+      "type": "string",
+      "description": "Scale ratio (e.g., '1:87')."
+    },
+    "standards": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of standards organizations (e.g., 'NEM', 'NMRA', 'JMRA')."
+    },
+    "track_gauge_mm": {
+      "type": "number",
+      "description": "Track gauge in millimeters."
+    },
+    "track_gauge_in": {
+      "type": "number",
+      "description": "Track gauge in inches."
+    },
+    "track_gauge_type": {
+      "type": "string",
+      "enum": ["STANDARD", "NARROW"],
+      "description": "Type of track gauge (STANDARD or NARROW)."
+    }
+  },
+  "additionalProperties": false
+}
+

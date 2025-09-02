@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Manufacturer",
+  "type": "object",
+  "required": [
+    "name",
+    "company_name",
+    "country",
+    "country_code",
+    "postal_address",
+    "website_url",
+    "social",
+    "scales",
+    "group"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Short brand name of the manufacturer."
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Full legal or registered company name."
+    },
+    "country": {
+      "type": "string",
+      "description": "Country of origin or main operation."
+    },
+    "country_code": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 2,
+      "description": "ISO 3166-1 alpha-2 country code."
+    },
+    "postal_address": {
+      "type": ["string", "null"],
+      "description": "Postal address of the company, or null if not available."
+    },
+    "website_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Official website URL, or null if not available."
+    },
+    "social": {
+      "type": "object",
+      "properties": {
+        "youtube": { "type": ["string", "null"], "format": "uri" },
+        "x_twitter": { "type": ["string", "null"], "format": "uri" },
+        "linkedin": { "type": ["string", "null"], "format": "uri" },
+        "facebook": { "type": ["string", "null"], "format": "uri" },
+        "instagram": { "type": ["string", "null"], "format": "uri" }
+      },
+      "required": ["youtube", "x_twitter", "linkedin", "facebook", "instagram"],
+      "additionalProperties": false
+    },
+    "scales": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of supported scales."
+    },
+    "group": {
+      "type": ["string", "null"],
+      "description": "Name of the holding group, or null if independent."
+    }
+  },
+  "additionalProperties": false
+}
+

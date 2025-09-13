@@ -267,6 +267,16 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
     - `road_name` and `road_number`
     - `notes` (optional)
 
+- **Maintenance Card**: Represents the maintenance and digital setup record for each model or rolling stock item. It centralizes all information related to the upkeep and digital configuration of an item, supporting both operational tracking and historical reference.
+
+  Key attributes:
+  - Maintenance status (e.g., up to date, due, overdue)
+  - Last and next scheduled maintenance dates
+  - Complete maintenance history (date, type, notes, performed by)
+  - Digital setup details (decoder installed, manufacturer, model, address, installation date, features)
+
+  The Maintenance Card enables users to view, edit, and track all maintenance and digitalization activities for their collection, ensuring timely upkeep and accurate documentation of digital configurations. It is accessible from the model/rolling stock detail view and provides reminders and status indicators in collection and depot overviews.
+
 ### **3.2 Features**
 
 #### **3.2.1 RailwayModel & Rolling Stock Management**
@@ -399,7 +409,21 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
   I want to filter or search by technical attributes (e.g., decoder type, maintenance needed)
   So that I can quickly find items that need attention or have specific features.
 
-### **5.5 Consist (Train Formation) Management**
+### **5.5 Maintenance Cards**
+* As a collector
+  I want to view the maintenance status and history for each model or rolling stock item
+  So that I can keep track of when maintenance was last performed and what was done.
+* As a collector
+  I want to add, edit, or remove maintenance events for my models and rolling stock
+  So that I can accurately document all upkeep and repairs.
+* As a collector
+  I want to receive reminders when maintenance is due or overdue
+  So that I can ensure my collection remains in good condition.
+* As a collector
+  I want to record digital setup details (such as decoder installation and address)
+  So that I have a complete technical record for each item in my collection.
+
+### **5.6 Consist (Train Formation) Management**
 * As a collector
   I want to create and manage consist sheets (train formations)
   So that I can document and plan the composition of trains for my collection or operations.
@@ -413,7 +437,7 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
   I want to duplicate an existing consist as a template
   So that I can quickly create similar train formations with minor changes.
 
-### **5.6 Shop Management**
+### **5.7 Shop Management**
 * As a collector
   I want to add, edit, or remove shops
   So that I can track where I buy or want to buy items.
@@ -421,12 +445,12 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
   I want to mark shops as favourites
   So that I can quickly select them when adding collection or wish list items.
 
-### **5.7 Preferences**
+### **5.8 Preferences**
 * As a collector
   I want to set my preferred currency, measurement system, favourite scales, railway companies, and eras
   So that the app matches my personal collecting interests.
 
-### **5.8 Import/Export**
+### **5.9 Import/Export**
 * As a collector
   I want to export my collection or wish lists to CSV or JSON
   So that I can back up or share my data.
@@ -671,6 +695,26 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
   * `HIGH_SPEED_TRAIN` – High speed train consist
   * `PASSENGER_TRAIN` – Passenger train consist
   * `FREIGHT_TRAIN` – Freight train consist
+
+### 6.25 Maintenance Status
+* Name: Maintenance Status
+* Description: The current maintenance state of a model or rolling stock item.
+* Values:
+  * `UP_TO_DATE` – Maintenance is up to date
+  * `DUE` – Maintenance is due
+  * `OVERDUE` – Maintenance is overdue
+  * `UNKNOWN` – Maintenance status is unknown
+
+### 6.26 Maintenance Type
+* Name: Maintenance Type
+* Description: The type of maintenance activity performed on a model or rolling stock item.
+* Values:
+  * `CLEANING` – Cleaning of the model or rolling stock
+  * `LUBRICATION` – Lubrication of moving parts
+  * `REPAIR` – Repair of faults or damage
+  * `INSPECTION` – Routine inspection
+  * `UPGRADE` – Upgrade or replacement of components
+  * `OTHER` – Other maintenance activity
 
 ## **7. E/R Model**
 
@@ -979,6 +1023,33 @@ ConsistRollingStock(
     road_name TEXT NOT NULL,
     road_number TEXT,                   -- Optional
     notes TEXT                          -- Optional
+)
+
+MaintenanceCard(
+    id INTEGER PRIMARY KEY,
+    model_id TEXT NOT NULL,                 -- FK to RailwayModel(id) or RollingStock(id)
+    maintenance_status TEXT NOT NULL,       -- e.g., 'up to date', 'due', 'overdue'
+    last_maintenance_date TEXT,             -- ISO 8601
+    next_maintenance_date TEXT,             -- ISO 8601, optional
+    digital_decoder_installed BOOLEAN,      -- true/false
+    decoder_manufacturer TEXT,              -- optional
+    decoder_model TEXT,                     -- optional
+    decoder_address TEXT,                   -- integer or string
+    decoder_installation_date TEXT,         -- optional
+    decoder_features TEXT,                  -- optional, e.g., sound, functions
+    created_at TEXT NOT NULL,               -- ISO 8601 timestamp
+    last_modified_at TEXT,                  -- ISO 8601 timestamp, optional
+    UNIQUE(model_id, model_type)
+)
+
+MaintenanceEvent(
+    id INTEGER PRIMARY KEY,
+    maintenance_card_id INTEGER NOT NULL REFERENCES MaintenanceCard(id),
+    date_performed TEXT NOT NULL,           -- ISO 8601
+    maintenance_type TEXT NOT NULL,         -- e.g., cleaning, lubrication, repair
+    notes TEXT,                            -- optional
+    performed_by TEXT,                     -- optional (user, shop, etc.)
+    created_at TEXT NOT NULL                -- ISO 8601 timestamp
 )
 
 ```

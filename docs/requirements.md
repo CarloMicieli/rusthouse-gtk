@@ -763,10 +763,14 @@ Scale(
     name TEXT NOT NULL,                 -- e.g., H0, N, Z, O, G
     ratio TEXT NOT NULL,                -- e.g., 1:87, 1:160
     track_gauge TEXT NOT NULL,          -- enum: Standard, Narrow
-    gauge REAL NOT NULL,                -- mm or inches
+    gauge_mm REAL NOT NULL,             -- mm
+    gauge_in REAL NOT NULL,             -- inches
     description TEXT,                   -- optional
     created_at TEXT NOT NULL,           -- creation timestamp (ISO 8601)
     last_modified_at TEXT,              -- last change timestamp (ISO 8601, optional)
+    version INTEGER NOT NULL DEFAULT 1
+)
+
 RailwayCompany(
     id TEXT PRIMARY KEY,                -- URN: urn:railway:{name}
     name TEXT NOT NULL,
@@ -810,7 +814,7 @@ Manufacturer(
 )
 
 RailwayModel(
-    id TEXT PRIMARY KEY,                -- URN: urn:railwaymodel:{manufacturer name}-{product code}
+    id TEXT PRIMARY KEY,          -- URN: urn:railwaymodel:{manufacturer name}-{product code}
     manufacturer_id TEXT NOT NULL REFERENCES Manufacturer(id),
     product_code TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -831,9 +835,10 @@ RollingStock(
     railway_model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar
     railway_company_id TEXT NOT NULL REFERENCES RailwayCompany(id),
-    length REAL NOT NULL,         -- cm/mm/in
+    length_mm REAL,               -- optional
+    length_in REAL,               -- optional           
     era TEXT NOT NULL,            -- string/enum
-    road_name TEXT NOT NULL,
+    type_name TEXT NOT NULL,      -- rolling stock type or group name
     road_number TEXT,             -- optional
     description TEXT,             -- optional
     detailed_description TEXT,    -- optional, rich text
@@ -844,10 +849,9 @@ RollingStock(
     livery TEXT,                  -- all categories
     series TEXT,                  -- locomotives, railcars, EMUs
     control TEXT,                 -- enum: No DCC, DCC Ready, DCC Fitted, DCC Sound (locomotives, railcars, EMUs)
-    dcc_socket_type TEXT,             -- enum (locomotives, railcars, EMUs)
+    dcc_socket_type TEXT,         -- enum (locomotives, railcars, EMUs)
     coupler_socket_type TEXT,     -- enum: NEM_355, NEM_356, NEM_357, NEM_358, NEM_359, NEM_360, NEM_361, NEM_362, NEM_363, NEM_365
     has_close_coupler BOOLEAN,    -- true if mounts a close coupler
-    has_standard_coupler_socket BOOLEAN, -- true if has a standard coupler socket
     has_digital_controller_coupler BOOLEAN, -- true if has a digital controller coupler
     min_radius REAL,              -- optional
     railcar_type TEXT,            -- enum: Power Car, Trailer Car (railcars only)
@@ -856,10 +860,7 @@ RollingStock(
     service_level TEXT,           -- enum: First Class, Second Class, Third Class (passenger cars only)
     freight_car_type TEXT,        -- freight cars only
     body_shell_type TEXT,         -- enum: metal die cast, plastic (optional, all categories)
-    chassis_type TEXT,            -- enum: metal die cast, plastic (optional, all categories)
-    created_at TEXT NOT NULL,     -- creation timestamp (ISO 8601)
-    last_modified_at TEXT,        -- last change timestamp (ISO 8601, optional)
-    version INTEGER NOT NULL DEFAULT 1
+    chassis_type TEXT             -- enum: metal die cast, plastic (optional, all categories)
 )
 
 Collection(

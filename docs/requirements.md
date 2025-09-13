@@ -201,28 +201,32 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
 
 - **Manufacturer:** Describes a company that produces model railway items. Includes company details, contact information, and business status. **ID format:** `urn:manufacturer:{name}` (URL-encoded).
 
--- **RailwayModel:** Represents a product made by a manufacturer, which may be a single item or a set (e.g., starter sets, train packs). A RailwayModel is a container for one or more rolling stock items. Each RailwayModel is uniquely identified by its product code and manufacturer, and can represent either an individual item (such as a locomotive or car) or a packaged set of multiple rolling stock. Main properties:
-
-    * `id` — Unique identifier (URN: `urn:model:{manufacturer name}-{product code}` URL-encoded)
-    * `manufacturer_id` (FK) — Reference to the Manufacturer
-    * `product_code` — Manufacturer’s product/catalogue code
-    * `name` — Name or title of the model or set
-    * `description` — Short description
-    * `detailed_description` — Optional, rich text
-    * `scale_id` (FK) — Reference to the Scale
-    * `power_method` — Enum: AC, DC, Trix express
-    * `category` — Enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar, Train Set, Starter Set
-    * `release_year` — Optional, year of release
-    * `delivery_date` — Optional, month or quarter
-    * `delivery_state` — Enum: Announced, Available, Cancelled, Unknown
-    * `status` — Optional, e.g., Active, Discontinued
-    * `created_at` — Creation timestamp (ISO 8601)
-    * `last_modified_at` — Last change timestamp (ISO 8601, optional)
-    * `version` — Integer, for schema/data versioning
-
-  Each RailwayModel contains one or more Rolling Stock items, which define the actual physical items included (for both individual railway models and sets). All rolling stock for a railway model share the same power method and scale. Sets are represented as RailwayModels with the appropriate category (e.g., Train Set, Starter Set) and multiple associated rolling stock.
+- **Railway Company:** Describes a real-world railway company, including its name, country, status, and contact information. **ID format:** `urn:railway:{name}` (URL-encoded).
 
 - **Scale:** Defines the modeling scale (e.g., H0, N, Z) and associated properties such as ratio and track gauge. **ID format:** `urn:scale:{name}` (URL-encoded).
+
+- **RailwayModel:** Represents a product made by a manufacturer, which may be a single item or a set (e.g., starter sets, train packs). A RailwayModel is a container for one or more rolling stock items. Each RailwayModel is uniquely identified by its product code and manufacturer, and can represent either an individual item (such as a locomotive or car) or a packaged set of multiple rolling stock. 
+
+  Key properties:
+
+    * Unique identifier (URN: `urn:model:{manufacturer name}-{product code}` URL-encoded)
+    * Manufacturer — the company that produced the model
+    * Product code — the manufacturer’s product or catalogue code
+    * Name — the name or title of the model or set
+    * Description — a short description
+    * Detailed description — optional, rich text
+    * Scale — the modeling scale (e.g., H0, N, Z)
+    * Power method — AC, DC, or Trix express
+    * Category — Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar, Train Set, or Starter Set
+    * Release year — optional, year of release
+    * Delivery date — optional, month or quarter
+    * Delivery state — Announced, Available, Cancelled, or Unknown
+    * Status — optional, e.g., Active, Discontinued
+    * Creation date — when the model was created (ISO 8601)
+    * Last modified date — last change (ISO 8601, optional)
+    * Version — integer for schema/data versioning
+
+  Each RailwayModel contains one or more Rolling Stock items, which define the actual physical items included (for both individual railway models and sets). All rolling stock for a railway model share the same power method and scale. Sets are represented as RailwayModels with the appropriate category (e.g., Train Set, Starter Set) and multiple associated rolling stock.
 
 - **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, electric multiple unit, or railcar) that is part of a model. Includes details like category, railway company, and physical attributes. The rolling stock category can be one of: locomotive, freight car, passenger car, electric multiple unit, or railcar. **ID format:** `urn:rollingstock:{model_urn}-{road_number}` (URL-encoded).
 
@@ -231,8 +235,6 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
   - For **passenger cars**: includes passenger car type (one of: baggage cars, combine cars, compartment coaches, dining cars, double deckers, driving trailers, lounges, observation cars, open coaches, railway post offices, sleeping cars), livery, and service level (first class, second class, third class).
   - For **freight cars**: includes freight car type (one of: auto transport cars, brake wagons, container cars, covered freight cars, deep well flat cars, dump cars, gondolas, heavy goods wagons, hinged cover wagons, hopper wagons, refrigerator cars, silo container cars, slide tarpaulin wagons, sliding wall boxcars, special transport cars, stake wagons, swing roof wagons, tank cars, telescope hood wagons) and livery.
   - For all rolling stock: optional body shell type and chassis type (allowed values: metal die cast, plastic).
-
-- **Railway Company:** Describes a real-world railway company, including its name, country, status, and contact information. **ID format:** `urn:railway:{name}` (URL-encoded).
 
 - **Seller:** Represents an entity from which a model or set can be purchased. A seller can be either a Shop (retailer/vendor) or a Private Collector. Each seller has a type (`shop` or `collector`), a unique ID, and relevant contact/location details. This allows tracking purchases from both shops and private individuals. **ID format:** `urn:seller:{type}:{name}` (URL-encoded).
 
@@ -248,24 +250,27 @@ The sidebar uses a GNOME-style navigation panel, providing clear, accessible acc
 
 - **Wish List & Wish List Items:** Wish lists are named lists of railway models and sets the collector wants to acquire. Each wish list item records a desired railway model or set, optional target price, and shop, and is linked to a specific wish list. Main properties: `id`, `wishlist_id` (FK), `item_type` (RailwayModel or Set), `item_id` (FK to RailwayModel or Set), `target_price`, `shop_id` (optional), `notes`. **Wish List ID format:** `urn:wishlist:{name}` (URL-encoded).
 
+
 - **Consist:** Represents a formation or consist sheet, defining the lineup of rail vehicles (locomotives, passenger cars, or freight cars) that make up a train at a given time. Each consist records:
-  * `id` — Unique identifier (URN: `urn:consist:{name}` URL-encoded)
-  * `name` — Name of the consist (e.g., "Orient Express")
-  * `era` — Era or epoch (e.g., III, IV, V)
-  * `year_start` — Year when the consist was first run
-  * `year_end` — Year when the consist was last run (or null for a single year)
-  * `route_origin` — Starting location (e.g., Paris)
-  * `route_destination` — Destination location (e.g., Istanbul)
-  * `description` — Optional description
-  * `created_at` — Creation timestamp (ISO 8601)
-  * `last_modified_at` — Last change timestamp (ISO 8601, optional)
-  * `version` — Integer, for schema/data versioning
-  * `rolling_stock` — Ordered list of rolling stock items in the consist. For each rolling stock:
-    - `category` (locomotive, passenger car, freight car)
-    - `subcategory` (e.g., postal car, sleeper, diner, etc.)
-    - `service_level` (for passenger cars)
-    - `road_name` and `road_number`
-    - `notes` (optional)
+
+  Key properties:
+  * Unique identifier (URN: `urn:consist:{name}` URL-encoded)
+  * Name — the name of the consist (e.g., "Orient Express")
+  * Era — the era or epoch (e.g., III, IV, V)
+  * Year started — the year when the consist was first run
+  * Year ended — the year when the consist was last run (or null for a single year)
+  * Route origin — the starting location (e.g., Paris)
+  * Route destination — the destination location (e.g., Istanbul)
+  * Description — optional description
+  * Creation date — when the consist was created (ISO 8601)
+  * Last modified date — last change (ISO 8601, optional)
+  * Version — integer for schema/data versioning
+  * Rolling stock — ordered list of rolling stock items in the consist. For each rolling stock:
+    - Category — locomotive, passenger car, or freight car
+    - Subcategory — e.g., postal car, sleeper, diner, etc.
+    - Service level — for passenger cars
+    - Road name and road number
+    - Notes — optional
 
 - **Maintenance Card**: Represents the maintenance and digital setup record for each model or rolling stock item. It centralizes all information related to the upkeep and digital configuration of an item, supporting both operational tracking and historical reference.
 

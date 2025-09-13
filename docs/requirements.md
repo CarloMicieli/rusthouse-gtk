@@ -1,4 +1,4 @@
-# **APP: Requirements**
+# **RustHouse: Requirements**
 
 ## **1. Introduction**
 
@@ -22,7 +22,7 @@ RustHouse **will not** include online marketplace integration, payment processin
 ### **1.3 Definitions, Acronyms, and Abbreviations**
 
 * **GTK4** – GIMP Toolkit, version 4 (GUI framework for Linux desktop applications)
-* **Model** – A product made by a manufacturer, identified by its product code, scale, and details.
+* **ModelProduct** – A product made by a manufacturer, identified by its product code, scale, and details.
 * **Rolling Stock** – Individual railway items (locomotive, freight car, passenger car) that make up a model.
 * **Collection** – The set of models owned by a collector.
 * **Wish List** – A named list of models the collector wants to acquire.
@@ -66,11 +66,12 @@ RustHouse is a **standalone desktop application** with local data storage using 
 * The seed data file must be maintained as part of the application source and included in all builds and distributions.
 
 #### **2.5.1 Advantages of using Avro over text-based formats (e.g., JSON)**
-  * Avro is a compact, binary format, resulting in smaller file sizes and faster read/write operations.
-  * Avro enforces a strict schema, ensuring data consistency and validation at both read and write time.
-  * Schema evolution is supported, allowing the data structure to change over time without breaking compatibility.
-  * Binary encoding reduces parsing errors and improves performance compared to text-based formats.
-  * Avro is widely supported in data processing tools and languages, making integration and future automation easier.
+
+* Avro is a compact, binary format, resulting in smaller file sizes and faster read/write operations.
+* Avro enforces a strict schema, ensuring data consistency and validation at both read and write time.
+* Schema evolution is supported, allowing the data structure to change over time without breaking compatibility.
+* Binary encoding reduces parsing errors and improves performance compared to text-based formats.
+* Avro is widely supported in data processing tools and languages, making integration and future automation easier.
 * This ensures all users have a consistent, up-to-date set of scales and railway companies, and prevents accidental user modification or deletion of these core entities.
 
 ## **3. Functional Requirements**
@@ -79,15 +80,33 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 - **Manufacturer:** Describes a company that produces model railway items. Includes company details, contact information, and business status. **ID format:** `urn:manufacturer:{name}` (URL-encoded).
 
-- **Model (Railway Model):** Represents a specific product made by a manufacturer, identified by product code, scale, descriptive details, and power method. Main properties: `id`, `manufacturer_id` (FK), `product_code`, `description`, `scale_id` (FK), `power_method` (AC, DC, Trix express), `category` (e.g., Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar), `delivery_date`, `delivery_state`, `details`, `created_at`, `last_modified_at`. Each model can include one or more rolling stock items. All rolling stock for a model shares the same power method. **ID format:** `urn:model:{manufacturer name}-{product code}` (URL-encoded).
+-- **RailwayModel:** Represents a product made by a manufacturer, which may be a single item or a set (e.g., starter sets, train packs). A RailwayModel is a container for one or more rolling stock items. Each RailwayModel is uniquely identified by its product code and manufacturer, and can represent either an individual item (such as a locomotive or car) or a packaged set of multiple rolling stock. Main properties:
 
-- **Set:** Represents a group of models or rolling stock items packaged and sold together as a single product (e.g., starter sets, train packs). Main properties: `id`, `manufacturer_id` (FK), `catalogue_number`, `name`, `scale`, `release_year`, `status`. The contents of a set are defined by the `SetContents` entity, which links each set to its constituent models and their quantities.
+    * `id` — Unique identifier (URN: `urn:model:{manufacturer name}-{product code}` URL-encoded)
+    * `manufacturer_id` (FK) — Reference to the Manufacturer
+    * `product_code` — Manufacturer’s product/catalogue code
+    * `name` — Name or title of the model or set
+    * `description` — Short description
+    * `detailed_description` — Optional, rich text
+    * `scale_id` (FK) — Reference to the Scale
+    * `power_method` — Enum: AC, DC, Trix express
+    * `category` — Enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar, Train Set, Starter Set
+    * `release_year` — Optional, year of release
+    * `delivery_date` — Optional, month or quarter
+    * `delivery_state` — Enum: Announced, Available, Cancelled, Unknown
+    * `status` — Optional, e.g., Active, Discontinued
+    * `created_at` — Creation timestamp (ISO 8601)
+    * `last_modified_at` — Last change timestamp (ISO 8601, optional)
+    * `version` — Integer, for schema/data versioning
+
+  Each RailwayModel contains one or more Rolling Stock items, which define the actual physical items included (for both individual railway models and sets). All rolling stock for a railway model share the same power method and scale. Sets are represented as RailwayModels with the appropriate category (e.g., Train Set, Starter Set) and multiple associated rolling stock.
 
 - **Scale:** Defines the modeling scale (e.g., H0, N, Z) and associated properties such as ratio and track gauge. **ID format:** `urn:scale:{name}` (URL-encoded).
 
 - **Rolling Stock:** Represents an individual railway item (locomotive, freight car, passenger car, electric multiple unit, or railcar) that is part of a model. Includes details like category, railway company, and physical attributes. The rolling stock category can be one of: locomotive, freight car, passenger car, electric multiple unit, or railcar. **ID format:** `urn:rollingstock:{model_urn}-{road_number}` (URL-encoded).
 
   - For **locomotives**, **railcars**, and **electric multiple units**: includes type (for locomotives: diesel, steam, electric; for railcars and EMUs: power car, trailer car), depot name, livery, series, control (no DCC, DCC ready, DCC fitted, DCC sound), and socket type (one of: NONE, NEM_355, NEM_356, NEM_357, NEM_359, NEM_360, NEM_362, NEM_365) for digital decoder. Also includes coupler properties: whether the model mounts a close coupler (`has_close_coupler`), has a standard coupler socket (`has_standard_coupler_socket`), or has a digital controller coupler (`has_digital_controller_coupler`).
+  - For **locomotives**, **railcars**, and **electric multiple units**: `dummy` (boolean, true if the item is non-motorized/dummy, false if powered).
   - For **passenger cars**: includes passenger car type (one of: baggage cars, combine cars, compartment coaches, dining cars, double deckers, driving trailers, lounges, observation cars, open coaches, railway post offices, sleeping cars), livery, and service level (first class, second class, third class).
   - For **freight cars**: includes freight car type (one of: auto transport cars, brake wagons, container cars, covered freight cars, deep well flat cars, dump cars, gondolas, heavy goods wagons, hinged cover wagons, hopper wagons, refrigerator cars, silo container cars, slide tarpaulin wagons, sliding wall boxcars, special transport cars, stake wagons, swing roof wagons, tank cars, telescope hood wagons) and livery.
   - For all rolling stock: optional body shell type and chassis type (allowed values: metal die cast, plastic).
@@ -104,21 +123,21 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 - **Collector:** Represents the owner of the collection and wish lists. Each collector manages a single personal collection and can create multiple wish lists. Collectors can define preferences such as preferred currency, system of measure, favourite scales, favourite railway companies, and favourite eras.
 
-- **Collection & Collection Items:** The collection is the set of models and sets owned by the collector. Each collection item records ownership details, purchase information, and links to either a model or a set, as well as the shop. Main properties: `id`, `collection_id` (FK), `item_type` (Model or Set), `item_id` (FK to Model or Set), `purchase_date`, `purchase_price`, `currency`, `vendor`, `condition`, `notes`, `quantity`.
+- **Collection & Collection Items:** The collection is the set of railway models and sets owned by the collector. Each collection item records ownership details, purchase information, and links to either a railway model or a set, as well as the shop. Main properties: `id`, `collection_id` (FK), `item_type` (RailwayModel or Set), `item_id` (FK to RailwayModel or Set), `purchase_date`, `purchase_price`, `currency`, `vendor`, `condition`, `notes`, `quantity`.
 
-- **Wish List & Wish List Items:** Wish lists are named lists of models and sets the collector wants to acquire. Each wish list item records a desired model or set, optional target price, and shop, and is linked to a specific wish list. Main properties: `id`, `wishlist_id` (FK), `item_type` (Model or Set), `item_id` (FK to Model or Set), `target_price`, `shop_id` (optional), `notes`. **Wish List ID format:** `urn:wishlist:{name}` (URL-encoded).
+- **Wish List & Wish List Items:** Wish lists are named lists of railway models and sets the collector wants to acquire. Each wish list item records a desired railway model or set, optional target price, and shop, and is linked to a specific wish list. Main properties: `id`, `wishlist_id` (FK), `item_type` (RailwayModel or Set), `item_id` (FK to RailwayModel or Set), `target_price`, `shop_id` (optional), `notes`. **Wish List ID format:** `urn:wishlist:{name}` (URL-encoded).
 
 ### **3.2 Features**
 
-#### **3.2.1 Model & Rolling Stock Management**
+#### **3.2.1 RailwayModel & Rolling Stock Management**
 
-* Create/Edit/Delete models.
-* Add one or more rolling stocks per model.
+* Create/Edit/Delete railway models.
+* Add one or more rolling stocks per railway model.
 * Manage rolling stock attributes.
 
 #### **3.2.2 Collection Management**
 
-* Add/Edit/Delete collection models.
+* Add/Edit/Delete collection railway models.
 * Record purchase details (price, shop).
 * Search and filter collection entries.
 * Manage a list of favourite shops for quick access when adding or editing collection items.
@@ -204,15 +223,15 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 ### **5.2 Wish List Management**
 * As a collector
-  I want to create and manage wish lists of models and sets
+  I want to create and manage wish lists of railway models and sets
   So that I can plan future purchases and track desired items.
 * As a collector
   I want to move items from a wish list to my collection
   So that I can record when I acquire something I wanted.
 
-### **5.3 Model & Rolling Stock Management**
+### **5.3 RailwayModel & Rolling Stock Management**
 * As a collector
-  I want to add, edit, or remove models and their rolling stock
+  I want to add, edit, or remove railway models and their rolling stock
   So that my collection reflects all the details of each item.
 
 ### **5.4 Depot Management**
@@ -247,9 +266,313 @@ RustHouse is a **standalone desktop application** with local data storage using 
   I want to import models from CSV
   So that I can quickly add many items at once.
 
-## **6. Database Schema**
+## 6 Enumerations
 
-### **6.1 Schema**
+### 6.1 Seller Type
+* Name: Seller Type
+* Description: The type of seller entity from which a model or set can be purchased.
+* Values:
+  * `SHOP` – Retailer or commercial seller
+  * `COLLECTOR` – Private individual or hobbyist
+
+### 6.2 Track Gauge
+* Name: Track Gauge
+* Description: The type of track gauge for a scale.
+* Values:
+  * `STANDARD` – Standard gauge track
+  * `NARROW` – Narrow gauge track
+
+### 6.3 Railway Company Status
+* Name: Railway Company Status
+* Description: The operational status of a railway company.
+* Values:
+  * `ACTIVE` – Currently operating
+  * `INACTIVE` – No longer operating
+
+### 6.4 Manufacturer Kind
+* Name: Manufacturer Kind
+* Description: The kind of manufacturer.
+* Values:
+  * `INDUSTRIAL` – Mass-market manufacturer
+  * `BRASS_METAL_MODELS` – Specialist, often hand-built models
+
+### 6.5 Manufacturer Status
+* Name: Manufacturer Status
+* Description: The operational status of a manufacturer.
+* Values:
+  * `ACTIVE` – Company is in business
+  * `OUT_OF_BUSINESS` – Company has ceased operations
+
+### 6.6 Delivery State
+* Name: Delivery State
+* Description: The delivery state of a railway model.
+* Values:
+  * `ANNOUNCED` – Model announced, not yet available
+  * `AVAILABLE` – Model is available for purchase
+  * `CANCELLED` – Model was cancelled
+  * `UNKNOWN` – Status not specified
+
+### 6.7 Power Method
+* Name: Power Method
+* Description: The power method used by a railway model.
+* Values:
+  * `AC` – Alternating current power
+  * `DC` – Direct current power
+  * `TRIX_EXPRESS` – Trix Express system
+
+### 6.8 Model Category
+* Name: Model Category
+* Description: The category of a railway model.
+* Values:
+  * `LOCOMOTIVE` – Self-propelled engine
+  * `FREIGHT_CAR` – Car for goods or cargo
+  * `PASSENGER_CAR` – Car for passengers
+  * `ELECTRIC_MULTIPLE_UNIT` – Self-propelled electric trainset
+  * `RAILCAR` – Self-propelled single car
+  * `TRAIN_SET` – Boxed set of multiple cars/locos
+  * `STARTER_SET` – Beginner's set with track and controller
+
+### 6.9 Rolling Stock Category
+* Name: Rolling Stock Category
+* Description: The category of a rolling stock item.
+* Values:
+  * `LOCOMOTIVE` – Self-propelled engine
+  * `FREIGHT_CAR` – Car for goods or cargo
+  * `PASSENGER_CAR` – Car for passengers
+  * `ELECTRIC_MULTIPLE_UNIT` – Self-propelled electric trainset
+  * `RAILCAR` – Self-propelled single car
+
+### 6.10 Locomotive Type
+* Name: Locomotive Type
+* Description: The type of locomotive.
+* Values:
+  * `DIESEL_LOCOMOTIVE` – Powered by diesel engine
+  * `STEAM_LOCOMOTIVE` – Powered by steam engine
+  * `ELECTRIC_LOCOMOTIVE` – Powered by electric motor
+  * `SHUNTING_LOCOMOTIVE` – For yard/switching duties
+
+### 6.11 Railcar
+* Name: Railcar Type
+* Description: The type of railcar.
+* Values:
+  * `POWER_CAR` – Motorized car in a trainset
+  * `TRAILER_CAR` – Non-powered car in a trainset
+
+### 6.12 EMU Type
+* Name: EMU Type
+* Description: The type of electric multiple unit.
+* Values:
+  * `DRIVING_CAR` – Car with driver's cab, controls train but may not be powered
+  * `HIGH_SPEED_TRAIN` – EMU designed for high-speed service
+  * `MOTOR_CAR` – Powered car with traction motors
+  * `POWER_CAR` – Main powered car in the EMU
+  * `TRAILER_CAR` – Non-powered car, no traction motors
+  * `TRAIN_SET` – Complete EMU set, may include multiple car types
+
+### 6.13 Control
+* Name: Control
+* Description: The digital control capability of a model.
+* Values:
+  * `NO_DCC` – No digital decoder, analog only
+  * `DCC_READY` – Prepared for DCC, socket for decoder
+  * `DCC_FITTED` – Digital decoder installed
+  * `DCC_SOUND` – Digital decoder with sound functions
+
+### 6.14 Socket Type
+* Name: Socket Type
+* Description: The type of NEM digital decoder socket for DCC or digital control, as per NEM standards.
+* Values:
+  * `NEM_651` – 6-pin, small scale
+  * `NEM_652` – 8-pin, standard
+  * `NEM_654` – 21-pin, PluX
+  * `NEM_658` – 22-pin, PluX22
+  * `NEM_660` – 21MTC
+  * `NEXT18` – Next18 socket
+  * `WIRE` – Hardwired
+  * `NONE` – No socket
+
+### 6.15 Passenger Car Type
+* Name: Passenger Car Type
+* Description: The type of passenger car.
+* Values:
+  * `BAGGAGE_CAR` – Car for luggage and parcels
+  * `COMBINE_CAR` – Car combining passenger and baggage sections
+  * `COMPARTMENT_COACH` – Coach with individual compartments
+  * `DINING_CAR` – Car with restaurant or dining facilities
+  * `DOUBLE_DECKER` – Two-level passenger car
+  * `DRIVING_TRAILER` – Passenger car with driver's cab (no engine)
+  * `LOUNGE` – Car with lounge or observation seating
+  * `OBSERVATION_CAR` – Car with panoramic windows, often at train end
+  * `OPEN_COACH` – Coach with open seating (no compartments)
+  * `RAILWAY_POST_OFFICE` – Car for mail sorting and transport
+  * `SLEEPING_CAR` – Car with beds or sleeping compartments
+
+### 6.16 Service Level
+* Name: Service Level
+* Description: The service level of a passenger car.
+* Values:
+  * `FIRST_CLASS` – Premium passenger accommodation
+  * `MIXED_FIRST_SECOND_CLASS` – Both first and second class
+  * `SECOND_CLASS` – Standard passenger accommodation
+  * `MIXED_SECOND_THIRD_CLASS` – Both second and third class
+  * `THIRD_CLASS` – Basic passenger accommodation
+
+### 6.17 Freight Car Type
+* Name: Freight Car Type
+* Description: The type of freight car.
+* Values:
+  * `AUTO_TRANSPORT_CAR` – For transporting automobiles
+  * `BRAKE_WAGON` – Equipped with handbrake, often for train end
+  * `CONTAINER_CAR` – Carries shipping containers
+  * `COVERED_FREIGHT_CAR` – Enclosed car for general goods
+  * `DEEP_WELL_FLAT_CAR` – Low-floor car for tall/large loads
+  * `DUMP_CAR` – For bulk materials, can tip to unload
+  * `GONDOLA` – Open-topped car for bulk goods
+  * `HEAVY_GOODS_WAGON` – For very heavy or oversized cargo
+  * `HINGED_COVER_WAGON` – Covered car with hinged roof for loading
+  * `HOPPER_WAGON` – For bulk goods, unloads from bottom
+  * `REFRIGERATOR_CAR` – Insulated, for perishable goods
+  * `SILO_CONTAINER_CAR` – For powders or granules, with silo containers
+  * `SLIDE_TARPAULIN_WAGON` – Covered with sliding tarpaulin for easy access
+  * `SLIDING_WALL_BOXCAR` – Boxcar with sliding walls for loading
+  * `SPECIAL_TRANSPORT_CAR` – For special or unusual loads
+  * `STAKE_WAGON` – Flat car with stakes for logs or pipes
+  * `SWING_ROOF_WAGON` – Roof swings open for loading/unloading
+  * `TANK_CAR` – For liquids or gases
+  * `TELESCOPE_HOOD_WAGON` – Covered car with telescoping hood for coils or sheet metal
+
+### 6.19 Body Shell
+* Name: Body Shell
+* Description: The material type for body shell.
+* Values:
+  * `METAL_DIE_CAST` – Made from metal die casting
+  * `PLASTIC` – Made from plastic
+
+### 6.20 Chassis Type
+* Name: Chassis Type
+* Description: The material type for chassis.
+* Values:
+  * `METAL_DIE_CAST` – Made from metal die casting
+  * `PLASTIC` – Made from plastic
+
+### 6.21 Priority
+* Name: Priority
+* Description: The priority of a wish list item.
+* Values:
+  * `HIGH` – Highest priority
+  * `NORMAL` – Normal priority
+  * `LOW` – Lowest priority
+
+### 6.22 Epoch
+* Name: Epoch
+* Description: The historical railway era or epoch classification for rolling stock and models.
+* Values:
+  * `I` – Early railways (approx. 1835–1920)
+  * `II` – Grouping and nationalization (approx. 1920–1945)
+  * `IIa` – Early part of Epoch II
+  * `IIb` – Later part of Epoch II
+  * `III` – Postwar, steam/diesel transition (approx. 1945–1970)
+  * `IIIa` – Early part of Epoch III
+  * `IIIb` – Later part of Epoch III
+  * `IV` – Modernization, UIC numbering (approx. 1970–1990)
+  * `IVa` – Early part of Epoch IV
+  * `IVb` – Later part of Epoch IV
+  * `V` – Privatization, new liveries (approx. 1990–2006)
+  * `Vm` – Modern sub-epoch of V
+  * `VI` – Contemporary era (approx. 2007–present)
+
+### 6.23 Coupler Socket Type
+* Name: Coupler Socket Type
+* Description: The type of coupler socket, following NEM standards for model railway couplers.
+* Values:
+  * `NEM_355` – Coupler pocket for Z scale (1:220)
+  * `NEM_356` – Coupler pocket for N scale (1:160)
+  * `NEM_357` – Coupler pocket for TT scale (1:120)
+  * `NEM_358` – Coupler pocket for H0e/H0m narrow gauge
+  * `NEM_359` – Coupler pocket for H0 scale (1:87), standard
+  * `NEM_360` – Coupler pocket for O scale (1:45)
+  * `NEM_361` – Coupler pocket for 1 scale (1:32)
+  * `NEM_362` – Universal close coupler pocket (widely used in H0)
+  * `NEM_363` – Coupler pocket for G scale (1:22.5)
+  * `NEM_365` – Coupler pocket for narrow gauge and special applications
+
+## **7. E/R Model**
+
+```mermaid
+erDiagram
+    COLLECTOR {
+        INTEGER id PK
+        TEXT name
+    }
+    SCALE {
+        TEXT id PK
+        TEXT name
+        TEXT ratio
+        TEXT track_gauge
+    }
+    RAILWAY_COMPANY {
+        TEXT id PK
+        TEXT name
+        TEXT country
+    }
+    MANUFACTURER {
+        TEXT id PK
+        TEXT name
+    }
+    RAILWAY_MODEL {
+        TEXT id PK
+        TEXT manufacturer_id FK
+        TEXT product_code
+        TEXT scale_id FK
+        TEXT category
+    }
+    ROLLING_STOCK {
+        TEXT id PK
+        TEXT railway_model_id FK
+        TEXT category
+        TEXT railway_company_id FK
+        TEXT era
+    }
+    SELLER {
+        TEXT id PK
+        TEXT name
+        TEXT type
+    }
+    COLLECTION {
+        INTEGER id PK
+    }
+    COLLECTION_ITEM {
+        INTEGER id PK
+        TEXT railway_model_id FK
+        REAL price
+        TEXT seller_id FK
+    }
+    WISHLIST {
+        TEXT id PK
+        TEXT name
+    }
+    WISHLIST_ITEM {
+        INTEGER id PK
+        TEXT wishlist_id FK
+        TEXT railway_model_id FK
+        TEXT seller_id FK
+    }
+
+    COLLECTOR ||--o{ COLLECTION : owns
+    COLLECTOR ||--o{ WISHLIST : owns
+    COLLECTION ||--o{ COLLECTION_ITEM : contains
+    SCALE ||--o{ RAILWAY_MODEL : has
+    MANUFACTURER ||--o{ RAILWAY_MODEL : produces
+    RAILWAY_COMPANY ||--o{ ROLLING_STOCK : operates
+    RAILWAY_MODEL ||--o{ ROLLING_STOCK : includes
+    RAILWAY_MODEL ||--o{ COLLECTION_ITEM : collected
+    SELLER ||--o{ COLLECTION_ITEM : sold_by
+    WISHLIST ||--o{ WISHLIST_ITEM : contains
+    RAILWAY_MODEL ||--o{ WISHLIST_ITEM : wished
+    SELLER ||--o{ WISHLIST_ITEM : wished_from
+```
+
+## **8. Database Schema**
 
 ```sql
 Collector(
@@ -268,9 +591,6 @@ Scale(
     description TEXT,                   -- optional
     created_at TEXT NOT NULL,           -- creation timestamp (ISO 8601)
     last_modified_at TEXT,              -- last change timestamp (ISO 8601, optional)
-    version INTEGER NOT NULL DEFAULT 1
-)
-
 RailwayCompany(
     id TEXT PRIMARY KEY,                -- URN: urn:railway:{name}
     name TEXT NOT NULL,
@@ -314,7 +634,7 @@ Manufacturer(
 )
 
 RailwayModel(
-    id TEXT PRIMARY KEY,                -- URN: urn:model:{manufacturer name}-{product code}
+    id TEXT PRIMARY KEY,                -- URN: urn:railwaymodel:{manufacturer name}-{product code}
     manufacturer_id TEXT NOT NULL REFERENCES Manufacturer(id),
     product_code TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -331,8 +651,8 @@ RailwayModel(
 )
 
 RollingStock(
-    id TEXT PRIMARY KEY,          -- URN: urn:rollingstock:{model_urn}-{road_number} or similar, see note below
-    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
+    id TEXT PRIMARY KEY,          -- URN: urn:rollingstock:{railwaymodel_urn}-{road_number} or similar, see note below
+    railway_model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     category TEXT NOT NULL,       -- enum: Locomotive, Freight Car, Passenger Car, Electric Multiple Unit, Railcar
     railway_company_id TEXT NOT NULL REFERENCES RailwayCompany(id),
     length REAL NOT NULL,         -- cm/mm/in
@@ -341,6 +661,7 @@ RollingStock(
     road_number TEXT,             -- optional
     description TEXT,             -- optional
     detailed_description TEXT,    -- optional, rich text
+    dummy BOOLEAN NOT NULL DEFAULT 0, -- true if non-motorized (dummy), false if powered
     -- Category-specific fields:
     locomotive_type TEXT,         -- enum: Diesel, Steam, Electric (locomotives only)
     depot_name TEXT,              -- locomotives, railcars, EMUs
@@ -365,6 +686,27 @@ RollingStock(
     version INTEGER NOT NULL DEFAULT 1
 )
 
+Collection(
+    id INTEGER PRIMARY KEY,
+    collector_id INTEGER NOT NULL REFERENCES Collector(id) UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    created_at TEXT NOT NULL,      -- ISO 8601 timestamp
+    last_modified_at TEXT,         -- ISO 8601 timestamp, optional
+    version INTEGER NOT NULL DEFAULT 1
+)
+
+CollectionItem(
+    id INTEGER PRIMARY KEY,
+    collection_id TEXT NOT NULL REFERENCES Collection(id),
+    railway_model_id TEXT NOT NULL REFERENCES RailwayModel(id),
+    price REAL NOT NULL,          -- numeric, currency
+    currency TEXT,                -- optional, ISO 4217 currency code (e.g., EUR, USD)
+    seller_id TEXT REFERENCES Seller(id), -- optional, foreign key to Seller (URN)
+    added_at TEXT NOT NULL,       -- when added to collection (ISO 8601)
+    removed_at TEXT               -- when removed from collection (ISO 8601, optional)
+)
+
 WishList(
     id TEXT PRIMARY KEY,               -- URN: urn:wishlist:{name}
     name TEXT NOT NULL,                -- name of the wish list
@@ -374,20 +716,10 @@ WishList(
     version INTEGER NOT NULL DEFAULT 1
 )
 
-CollectionItem(
-    id INTEGER PRIMARY KEY,
-    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
-    price REAL NOT NULL,          -- numeric, currency
-    currency TEXT,                -- optional, ISO 4217 currency code (e.g., EUR, USD)
-    seller_id TEXT REFERENCES Seller(id), -- optional, foreign key to Seller (URN)
-    added_at TEXT NOT NULL,       -- when added to collection (ISO 8601)
-    removed_at TEXT               -- when removed from collection (ISO 8601, optional)
-)
-
 WishListItem(
     id INTEGER PRIMARY KEY,
     wishlist_id TEXT NOT NULL REFERENCES WishList(id),
-    model_id TEXT NOT NULL REFERENCES RailwayModel(id),
+    railway_model_id TEXT NOT NULL REFERENCES RailwayModel(id),
     desired_price REAL,           -- optional, currency
     currency TEXT,                -- optional, ISO 4217 currency code (e.g., EUR, USD)
     seller_id TEXT REFERENCES Seller(id), -- optional, foreign key to Seller (URN)
@@ -447,232 +779,748 @@ FavouriteEra(
 
 ```
 
-### 6.1 Enumerations
+# **8. Avro Schemas**
 
-#### 6.1.1 Seller Type
-* Name: Seller Type
-* Description: The type of seller entity from which a model or set can be purchased.
-* Values:
-  * `SHOP` – Retailer or commercial seller
-  * `COLLECTOR` – Private individual or hobbyist
+## **8.1 Scale**
 
-#### 6.1.2 Track Gauge
-* Name: Track Gauge
-* Description: The type of track gauge for a scale.
-* Values:
-  * `STANDARD` – Standard gauge track
-  * `NARROW` – Narrow gauge track
+```avro
+{
+  "type": "record",
+  "name": "Scale",
+  "namespace": "io.github.carlomicieli.rusthouse",
+  "doc": "Defines the modeling scale (e.g., H0, N, Z) and associated properties.",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "doc": "URN: urn:scale:{name}"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "Scale name, e.g., H0, N, Z, O, G"
+    },
+    {
+      "name": "ratio",
+      "type": "string",
+      "doc": "Scale ratio, e.g., 1:87, 1:160"
+    },
+    {
+      "name": "track_gauge",
+      "type": {
+        "type": "enum",
+        "name": "TrackGauge",
+        "symbols": [
+          "STANDARD",
+          "NARROW"
+        ]
+      },
+      "doc": "Track gauge type"
+    },
+    {
+      "name": "gauge",
+      "type": "double",
+      "doc": "Track gauge in mm or inches"
+    },
+    {
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional description"
+    },
+    {
+      "name": "created_at",
+      "type": "string",
+      "doc": "Creation timestamp (ISO 8601)"
+    },
+    {
+      "name": "last_modified_at",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Last change timestamp (ISO 8601, optional)"
+    },
+    {
+      "name": "version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema/data version"
+    }
+  ]
+}
+```
 
-#### 6.1.3 Railway Company Status
-* Name: Railway Company Status
-* Description: The operational status of a railway company.
-* Values:
-  * `ACTIVE` – Currently operating
-  * `INACTIVE` – No longer operating
+## **8.2 Railway Company**
 
-#### 6.1.4 Manufacturer Kind
-* Name: Manufacturer Kind
-* Description: The kind of manufacturer.
-* Values:
-  * `INDUSTRIAL` – Mass-market manufacturer
-  * `BRASS_METAL_MODELS` – Specialist, often hand-built models
+```avro
+{
+  "type": "record",
+  "name": "RailwayCompany",
+  "namespace": "io.github.carlomicieli.rusthouse",
+  "doc": "Describes a real-world railway company, including its name, country, status, and contact information.",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "doc": "URN: urn:railway:{name}"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "Railway company name"
+    },
+    {
+      "name": "registered_company_name",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional registered company name"
+    },
+    {
+      "name": "country",
+      "type": "string",
+      "doc": "ISO 3166-1 alpha-2 country code"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "RailwayCompanyStatus",
+        "symbols": [
+          "ACTIVE",
+          "INACTIVE"
+        ]
+      },
+      "doc": "Operational status"
+    },
+    {
+      "name": "website_url",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional website URL"
+    },
+    {
+      "name": "linkedin",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional LinkedIn URL"
+    },
+    {
+      "name": "facebook",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional Facebook URL"
+    },
+    {
+      "name": "twitter",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional Twitter URL"
+    },
+    {
+      "name": "instagram",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional Instagram URL"
+    },
+    {
+      "name": "youtube",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional YouTube URL"
+    },
+    {
+      "name": "description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional description"
+    },
+    {
+      "name": "created_at",
+      "type": "string",
+      "doc": "Creation timestamp (ISO 8601)"
+    },
+    {
+      "name": "last_modified_at",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Last change timestamp (ISO 8601, optional)"
+    },
+    {
+      "name": "version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema/data version"
+    }
+  ]
+}
+```
 
-#### 6.1.5 Manufacturer Status
-* Name: Manufacturer Status
-* Description: The operational status of a manufacturer.
-* Values:
-  * `ACTIVE` – Company is in business
-  * `OUT_OF_BUSINESS` – Company has ceased operations
+## **8.3. Railway Model**
 
-#### 6.1.6 Delivery State
-* Name: Delivery State
-* Description: The delivery state of a railway model.
-* Values:
-  * `ANNOUNCED` – Model announced, not yet available
-  * `AVAILABLE` – Model is available for purchase
-  * `CANCELLED` – Model was cancelled
-  * `UNKNOWN` – Status not specified
-
-#### 6.1.7 Power Method
-* Name: Power Method
-* Description: The power method used by a railway model.
-* Values:
-  * `AC` – Alternating current power
-  * `DC` – Direct current power
-  * `TRIX_EXPRESS` – Trix Express system
-
-#### 6.1.8 Model Category
-* Name: Model Category
-* Description: The category of a railway model.
-* Values:
-  * `LOCOMOTIVE` – Self-propelled engine
-  * `FREIGHT_CAR` – Car for goods or cargo
-  * `PASSENGER_CAR` – Car for passengers
-  * `ELECTRIC_MULTIPLE_UNIT` – Self-propelled electric trainset
-  * `RAILCAR` – Self-propelled single car
-  * `TRAIN_SET` – Boxed set of multiple cars/locos
-  * `STARTER_SET` – Beginner's set with track and controller
-
-#### 6.1.9 Rolling Stock Category
-* Name: Rolling Stock Category
-* Description: The category of a rolling stock item.
-* Values:
-  * `LOCOMOTIVE` – Self-propelled engine
-  * `FREIGHT_CAR` – Car for goods or cargo
-  * `PASSENGER_CAR` – Car for passengers
-  * `ELECTRIC_MULTIPLE_UNIT` – Self-propelled electric trainset
-  * `RAILCAR` – Self-propelled single car
-
-#### 6.1.10 Locomotive Type
-* Name: Locomotive Type
-* Description: The type of locomotive.
-* Values:
-  * `DIESEL_LOCOMOTIVE` – Powered by diesel engine
-  * `STEAM_LOCOMOTIVE` – Powered by steam engine
-  * `ELECTRIC_LOCOMOTIVE` – Powered by electric motor
-  * `SHUNTING_LOCOMOTIVE` – For yard/switching duties
-
-#### 6.1.11 Railcar
-* Name: Railcar Type
-* Description: The type of railcar.
-* Values:
-  * `POWER_CAR` – Motorized car in a trainset
-  * `TRAILER_CAR` – Non-powered car in a trainset
-
-#### 6.1.12 EMU Type
-* Name: EMU Type
-* Description: The type of electric multiple unit.
-* Values:
-  * `DRIVING_CAR` – Car with driver's cab, controls train but may not be powered
-  * `HIGH_SPEED_TRAIN` – EMU designed for high-speed service
-  * `MOTOR_CAR` – Powered car with traction motors
-  * `POWER_CAR` – Main powered car in the EMU
-  * `TRAILER_CAR` – Non-powered car, no traction motors
-  * `TRAIN_SET` – Complete EMU set, may include multiple car types
-
-#### 6.1.13 Control
-* Name: Control
-* Description: The digital control capability of a model.
-* Values:
-  * `NO_DCC` – No digital decoder, analog only
-  * `DCC_READY` – Prepared for DCC, socket for decoder
-  * `DCC_FITTED` – Digital decoder installed
-  * `DCC_SOUND` – Digital decoder with sound functions
-
-#### 6.1.14 Socket Type
-* Name: Socket Type
-* Description: The type of NEM digital decoder socket for DCC or digital control, as per NEM standards.
-* Values:
-  * `NEM_651` – 6-pin, small scale
-  * `NEM_652` – 8-pin, standard
-  * `NEM_654` – 21-pin, PluX
-  * `NEM_658` – 22-pin, PluX22
-  * `NEM_660` – 21MTC
-  * `NEXT18` – Next18 socket
-  * `WIRE` – Hardwired
-  * `NONE` – No socket
-
-#### 6.1.15 Passenger Car Type
-* Name: Passenger Car Type
-* Description: The type of passenger car.
-* Values:
-  * `BAGGAGE_CAR` – Car for luggage and parcels
-  * `COMBINE_CAR` – Car combining passenger and baggage sections
-  * `COMPARTMENT_COACH` – Coach with individual compartments
-  * `DINING_CAR` – Car with restaurant or dining facilities
-  * `DOUBLE_DECKER` – Two-level passenger car
-  * `DRIVING_TRAILER` – Passenger car with driver's cab (no engine)
-  * `LOUNGE` – Car with lounge or observation seating
-  * `OBSERVATION_CAR` – Car with panoramic windows, often at train end
-  * `OPEN_COACH` – Coach with open seating (no compartments)
-  * `RAILWAY_POST_OFFICE` – Car for mail sorting and transport
-  * `SLEEPING_CAR` – Car with beds or sleeping compartments
-
-#### 6.1.16 Service Level
-* Name: Service Level
-* Description: The service level of a passenger car.
-* Values:
-  * `FIRST_CLASS` – Premium passenger accommodation
-  * `MIXED_FIRST_SECOND_CLASS` – Both first and second class
-  * `SECOND_CLASS` – Standard passenger accommodation
-  * `MIXED_SECOND_THIRD_CLASS` – Both second and third class
-  * `THIRD_CLASS` – Basic passenger accommodation
-
-#### 6.1.17 Freight Car Type
-* Name: Freight Car Type
-* Description: The type of freight car.
-* Values:
-  * `AUTO_TRANSPORT_CAR` – For transporting automobiles
-  * `BRAKE_WAGON` – Equipped with handbrake, often for train end
-  * `CONTAINER_CAR` – Carries shipping containers
-  * `COVERED_FREIGHT_CAR` – Enclosed car for general goods
-  * `DEEP_WELL_FLAT_CAR` – Low-floor car for tall/large loads
-  * `DUMP_CAR` – For bulk materials, can tip to unload
-  * `GONDOLA` – Open-topped car for bulk goods
-  * `HEAVY_GOODS_WAGON` – For very heavy or oversized cargo
-  * `HINGED_COVER_WAGON` – Covered car with hinged roof for loading
-  * `HOPPER_WAGON` – For bulk goods, unloads from bottom
-  * `REFRIGERATOR_CAR` – Insulated, for perishable goods
-  * `SILO_CONTAINER_CAR` – For powders or granules, with silo containers
-  * `SLIDE_TARPAULIN_WAGON` – Covered with sliding tarpaulin for easy access
-  * `SLIDING_WALL_BOXCAR` – Boxcar with sliding walls for loading
-  * `SPECIAL_TRANSPORT_CAR` – For special or unusual loads
-  * `STAKE_WAGON` – Flat car with stakes for logs or pipes
-  * `SWING_ROOF_WAGON` – Roof swings open for loading/unloading
-  * `TANK_CAR` – For liquids or gases
-  * `TELESCOPE_HOOD_WAGON` – Covered car with telescoping hood for coils or sheet metal
-
-#### 6.1.19 Body Shell
-* Name: Body Shell
-* Description: The material type for body shell.
-* Values:
-  * `METAL_DIE_CAST` – Made from metal die casting
-  * `PLASTIC` – Made from plastic
-
-#### 6.1.20 Chassis Type
-* Name: Chassis Type
-* Description: The material type for chassis.
-* Values:
-  * `METAL_DIE_CAST` – Made from metal die casting
-  * `PLASTIC` – Made from plastic
-
-#### 6.1.21 Priority
-* Name: Priority
-* Description: The priority of a wish list item.
-* Values:
-  * `HIGH` – Highest priority
-  * `NORMAL` – Normal priority
-  * `LOW` – Lowest priority
-
-#### 6.1.22 Epoch
-* Name: Epoch
-* Description: The historical railway era or epoch classification for rolling stock and models.
-* Values:
-  * `I` – Early railways (approx. 1835–1920)
-  * `II` – Grouping and nationalization (approx. 1920–1945)
-  * `IIa` – Early part of Epoch II
-  * `IIb` – Later part of Epoch II
-  * `III` – Postwar, steam/diesel transition (approx. 1945–1970)
-  * `IIIa` – Early part of Epoch III
-  * `IIIb` – Later part of Epoch III
-  * `IV` – Modernization, UIC numbering (approx. 1970–1990)
-  * `IVa` – Early part of Epoch IV
-  * `IVb` – Later part of Epoch IV
-  * `V` – Privatization, new liveries (approx. 1990–2006)
-  * `Vm` – Modern sub-epoch of V
-  * `VI` – Contemporary era (approx. 2007–present)
-
-#### 6.1.23 Coupler Socket Type
-* Name: Coupler Socket Type
-* Description: The type of coupler socket, following NEM standards for model railway couplers.
-* Values:
-  * `NEM_355` – Coupler pocket for Z scale (1:220)
-  * `NEM_356` – Coupler pocket for N scale (1:160)
-  * `NEM_357` – Coupler pocket for TT scale (1:120)
-  * `NEM_358` – Coupler pocket for H0e/H0m narrow gauge
-  * `NEM_359` – Coupler pocket for H0 scale (1:87), standard
-  * `NEM_360` – Coupler pocket for O scale (1:45)
-  * `NEM_361` – Coupler pocket for 1 scale (1:32)
-  * `NEM_362` – Universal close coupler pocket (widely used in H0)
-  * `NEM_363` – Coupler pocket for G scale (1:22.5)
-  * `NEM_365` – Coupler pocket for narrow gauge and special applications
+```avro
+{
+  "type": "record",
+  "name": "RailwayModel",
+  "namespace": "io.github.carlomicieli.rusthouse",
+  "doc": "Represents a product made by a manufacturer, which may be a single item or a set (e.g., starter sets, train packs). Includes associated rolling stock information.",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "doc": "URN: urn:model:{manufacturer name}-{product code}"
+    },
+    {
+      "name": "manufacturer_id",
+      "type": "string",
+      "doc": "Reference to the Manufacturer (URN)"
+    },
+    {
+      "name": "product_code",
+      "type": "string",
+      "doc": "Manufacturer’s product/catalogue code"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "doc": "Name or title of the model or set"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "doc": "Short description"
+    },
+    {
+      "name": "detailed_description",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional, rich text"
+    },
+    {
+      "name": "scale_id",
+      "type": "string",
+      "doc": "Reference to the Scale (URN)"
+    },
+    {
+      "name": "power_method",
+      "type": {
+        "type": "enum",
+        "name": "PowerMethod",
+        "symbols": [
+          "AC",
+          "DC",
+          "TRIX_EXPRESS"
+        ]
+      },
+      "doc": "Power method used by the model"
+    },
+    {
+      "name": "category",
+      "type": {
+        "type": "enum",
+        "name": "ModelCategory",
+        "symbols": [
+          "LOCOMOTIVE",
+          "FREIGHT_CAR",
+          "PASSENGER_CAR",
+          "ELECTRIC_MULTIPLE_UNIT",
+          "RAILCAR",
+          "TRAIN_SET",
+          "STARTER_SET"
+        ]
+      },
+      "doc": "Category of the model"
+    },
+    {
+      "name": "release_year",
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null,
+      "doc": "Optional, year of release"
+    },
+    {
+      "name": "delivery_date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional, month or quarter"
+    },
+    {
+      "name": "delivery_state",
+      "type": {
+        "type": "enum",
+        "name": "DeliveryState",
+        "symbols": [
+          "ANNOUNCED",
+          "AVAILABLE",
+          "CANCELLED",
+          "UNKNOWN"
+        ]
+      },
+      "doc": "Delivery state"
+    },
+    {
+      "name": "status",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Optional, e.g., Active, Discontinued"
+    },
+    {
+      "name": "created_at",
+      "type": "string",
+      "doc": "Creation timestamp (ISO 8601)"
+    },
+    {
+      "name": "last_modified_at",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null,
+      "doc": "Last change timestamp (ISO 8601, optional)"
+    },
+    {
+      "name": "version",
+      "type": "int",
+      "default": 1,
+      "doc": "Schema/data version"
+    },
+    {
+      "name": "rolling_stock",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "RollingStock",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "doc": "URN: urn:rollingstock:{model_urn}-{road_number}"
+            },
+            {
+              "name": "category",
+              "type": {
+                "type": "enum",
+                "name": "RollingStockCategory",
+                "symbols": [
+                  "LOCOMOTIVE",
+                  "FREIGHT_CAR",
+                  "PASSENGER_CAR",
+                  "ELECTRIC_MULTIPLE_UNIT",
+                  "RAILCAR"
+                ]
+              },
+              "doc": "Category of the rolling stock"
+            },
+            {
+              "name": "railway_company_id",
+              "type": "string",
+              "doc": "Reference to the RailwayCompany (URN)"
+            },
+            {
+              "name": "length",
+              "type": "double",
+              "doc": "Length (mm or cm)"
+            },
+            {
+              "name": "era",
+              "type": "string",
+              "doc": "Era or epoch (e.g., III, IV, V)"
+            },
+            {
+              "name": "road_name",
+              "type": "string",
+              "doc": "Road name or reporting mark"
+            },
+            {
+              "name": "road_number",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Road number (optional)"
+            },
+            {
+              "name": "description",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Optional description"
+            },
+            {
+              "name": "detailed_description",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Optional, rich text"
+            },
+            {
+              "name": "dummy",
+              "type": "boolean",
+              "doc": "True if non-motorized (dummy), false if powered"
+            },
+            {
+              "name": "locomotive_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "LocomotiveType",
+                  "symbols": [
+                    "DIESEL_LOCOMOTIVE",
+                    "STEAM_LOCOMOTIVE",
+                    "ELECTRIC_LOCOMOTIVE",
+                    "SHUNTING_LOCOMOTIVE"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Locomotive type (locomotives only)"
+            },
+            {
+              "name": "depot_name",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Depot name (locomotives, railcars, EMUs)"
+            },
+            {
+              "name": "livery",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Livery (all categories)"
+            },
+            {
+              "name": "series",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Series (locomotives, railcars, EMUs)"
+            },
+            {
+              "name": "control",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "Control",
+                  "symbols": [
+                    "NO_DCC",
+                    "DCC_READY",
+                    "DCC_FITTED",
+                    "DCC_SOUND"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Digital control capability"
+            },
+            {
+              "name": "dcc_socket_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "SocketType",
+                  "symbols": [
+                    "NEM_651",
+                    "NEM_652",
+                    "NEM_654",
+                    "NEM_658",
+                    "NEM_660",
+                    "NEXT18",
+                    "WIRE",
+                    "NONE"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "DCC socket type"
+            },
+            {
+              "name": "coupler_socket_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "CouplerSocketType",
+                  "symbols": [
+                    "NEM_355",
+                    "NEM_356",
+                    "NEM_357",
+                    "NEM_358",
+                    "NEM_359",
+                    "NEM_360",
+                    "NEM_361",
+                    "NEM_362",
+                    "NEM_363",
+                    "NEM_365"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Coupler socket type"
+            },
+            {
+              "name": "has_close_coupler",
+              "type": [
+                "null",
+                "boolean"
+              ],
+              "default": null,
+              "doc": "True if mounts a close coupler"
+            },
+            {
+              "name": "has_standard_coupler_socket",
+              "type": [
+                "null",
+                "boolean"
+              ],
+              "default": null,
+              "doc": "True if has a standard coupler socket"
+            },
+            {
+              "name": "has_digital_controller_coupler",
+              "type": [
+                "null",
+                "boolean"
+              ],
+              "default": null,
+              "doc": "True if has a digital controller coupler"
+            },
+            {
+              "name": "min_radius",
+              "type": [
+                "null",
+                "double"
+              ],
+              "default": null,
+              "doc": "Minimum radius (optional)"
+            },
+            {
+              "name": "railcar_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "RailcarType",
+                  "symbols": [
+                    "POWER_CAR",
+                    "TRAILER_CAR"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Railcar type (railcars only)"
+            },
+            {
+              "name": "emu_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "EMUType",
+                  "symbols": [
+                    "DRIVING_CAR",
+                    "HIGH_SPEED_TRAIN",
+                    "MOTOR_CAR",
+                    "POWER_CAR",
+                    "TRAILER_CAR",
+                    "TRAIN_SET"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "EMU type (EMUs only)"
+            },
+            {
+              "name": "passenger_car_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "PassengerCarType",
+                  "symbols": [
+                    "BAGGAGE_CAR",
+                    "COMBINE_CAR",
+                    "COMPARTMENT_COACH",
+                    "DINING_CAR",
+                    "DOUBLE_DECKER",
+                    "DRIVING_TRAILER",
+                    "LOUNGE",
+                    "OBSERVATION_CAR",
+                    "OPEN_COACH",
+                    "RAILWAY_POST_OFFICE",
+                    "SLEEPING_CAR"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Passenger car type (passenger cars only)"
+            },
+            {
+              "name": "service_level",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "ServiceLevel",
+                  "symbols": [
+                    "FIRST_CLASS",
+                    "MIXED_FIRST_SECOND_CLASS",
+                    "SECOND_CLASS",
+                    "MIXED_SECOND_THIRD_CLASS",
+                    "THIRD_CLASS"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Service level (passenger cars only)"
+            },
+            {
+              "name": "freight_car_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "FreightCarType",
+                  "symbols": [
+                    "AUTO_TRANSPORT_CAR",
+                    "BRAKE_WAGON",
+                    "CONTAINER_CAR",
+                    "COVERED_FREIGHT_CAR",
+                    "DEEP_WELL_FLAT_CAR",
+                    "DUMP_CAR",
+                    "GONDOLA",
+                    "HEAVY_GOODS_WAGON",
+                    "HINGED_COVER_WAGON",
+                    "HOPPER_WAGON",
+                    "REFRIGERATOR_CAR",
+                    "SILO_CONTAINER_CAR",
+                    "SLIDE_TARPAULIN_WAGON",
+                    "SLIDING_WALL_BOXCAR",
+                    "SPECIAL_TRANSPORT_CAR",
+                    "STAKE_WAGON",
+                    "SWING_ROOF_WAGON",
+                    "TANK_CAR",
+                    "TELESCOPE_HOOD_WAGON"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Freight car type (freight cars only)"
+            },
+            {
+              "name": "body_shell_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "BodyShellType",
+                  "symbols": [
+                    "METAL_DIE_CAST",
+                    "PLASTIC"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Body shell material type"
+            },
+            {
+              "name": "chassis_type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "ChassisType",
+                  "symbols": [
+                    "METAL_DIE_CAST",
+                    "PLASTIC"
+                  ]
+                }
+              ],
+              "default": null,
+              "doc": "Chassis material type"
+            },
+            {
+              "name": "created_at",
+              "type": "string",
+              "doc": "Creation timestamp (ISO 8601)"
+            },
+            {
+              "name": "last_modified_at",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null,
+              "doc": "Last change timestamp (ISO 8601, optional)"
+            },
+            {
+              "name": "version",
+              "type": "int",
+              "default": 1,
+              "doc": "Schema/data version"
+            }
+          ]
+        }
+      },
+      "doc": "List of rolling stock items included in this model"
+    }
+  ]
+}
+```

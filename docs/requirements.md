@@ -8,12 +8,14 @@ The purpose of **RustHouse** is to provide model railway collectors with a deskt
 
 ### **1.2 Scope**
 
+
 RustHouse will be a **GTK4-based desktop application** running on Linux and Windows. It will enable users to:
 
-* Manage one personal collection.
+* Manage a personal collection.
 * Manage multiple wish lists.
 * Record detailed model and rolling stock information.
 * Track purchase information for items in the collection.
+* Define and manage railway consist sheets (train formations), including the sequence and details of rolling stock in a train at a given time.
 * Search, filter, and sort entries.
 * Import/export data in common formats.
 
@@ -29,6 +31,7 @@ RustHouse **will not** include online marketplace integration, payment processin
 * **Railway Company** – The real-world railway operator or company that the model or rolling stock represents (e.g., DB, SNCF, Amtrak).
 * **Scale** – The proportional ratio between the model's size and the real-world object it represents (e.g., HO, N, O, Z).
 * **Set** – A group of models or rolling stock items packaged and sold together as a single product (e.g., starter sets, train packs).
+* **Consist** – A formation or lineup of rail vehicles (locomotives, passenger cars, or freight cars) that make up a train at a given time. In RustHouse, a Consist sheet records the sequence, composition, and details of rolling stock in a train, including name, era, year(s) of operation, route, and rolling stock details.
 
 ## **2. Overall Description**
 
@@ -127,6 +130,25 @@ RustHouse is a **standalone desktop application** with local data storage using 
 
 - **Wish List & Wish List Items:** Wish lists are named lists of railway models and sets the collector wants to acquire. Each wish list item records a desired railway model or set, optional target price, and shop, and is linked to a specific wish list. Main properties: `id`, `wishlist_id` (FK), `item_type` (RailwayModel or Set), `item_id` (FK to RailwayModel or Set), `target_price`, `shop_id` (optional), `notes`. **Wish List ID format:** `urn:wishlist:{name}` (URL-encoded).
 
+- **Consist:** Represents a formation or consist sheet, defining the lineup of rail vehicles (locomotives, passenger cars, or freight cars) that make up a train at a given time. Each consist records:
+  * `id` — Unique identifier (URN: `urn:consist:{name}` URL-encoded)
+  * `name` — Name of the consist (e.g., "Orient Express")
+  * `era` — Era or epoch (e.g., III, IV, V)
+  * `year_start` — Year when the consist was first run
+  * `year_end` — Year when the consist was last run (or null for a single year)
+  * `route_origin` — Starting location (e.g., Paris)
+  * `route_destination` — Destination location (e.g., Istanbul)
+  * `description` — Optional description
+  * `created_at` — Creation timestamp (ISO 8601)
+  * `last_modified_at` — Last change timestamp (ISO 8601, optional)
+  * `version` — Integer, for schema/data versioning
+  * `rolling_stock` — Ordered list of rolling stock items in the consist. For each rolling stock:
+    - `category` (locomotive, passenger car, freight car)
+    - `subcategory` (e.g., postal car, sleeper, diner, etc.)
+    - `service_level` (for passenger cars)
+    - `road_name` and `road_number`
+    - `notes` (optional)
+
 ### **3.2 Features**
 
 #### **3.2.1 RailwayModel & Rolling Stock Management**
@@ -178,7 +200,21 @@ RustHouse is a **standalone desktop application** with local data storage using 
 * Manage a list of favourite eras.
 * Access and modify all preferences via a dedicated settings widget in the application.
 
-#### **3.2.8 Import/Export**
+#### **3.2.8 Consist (Train Formation) Management**
+
+* Create/Edit/Delete consist sheets (train formations).
+* Define consist properties: name, era, year(s) of operation, route (origin/destination), and description.
+* Add, remove, and reorder rolling stock in a consist, specifying for each:
+  * Category (locomotive, passenger car, freight car)
+  * Subcategory (e.g., postal car, sleeper, diner, etc.)
+  * Service level (for passenger cars)
+  * Road name and number
+  * Notes (optional)
+* View and search all defined consists.
+* View details of a consist, including the ordered list of rolling stock.
+* Duplicate an existing consist as a template for a new one.
+
+#### **3.2.9 Import/Export**
 
 * Export collection or wish lists to CSV/JSON.
 * Import models from CSV (optional in v1).
@@ -245,7 +281,21 @@ RustHouse is a **standalone desktop application** with local data storage using 
   I want to filter or search by technical attributes (e.g., decoder type, maintenance needed)
   So that I can quickly find items that need attention or have specific features.
 
-### **5.5 Shop Management**
+### **5.5 Consist (Train Formation) Management**
+* As a collector
+  I want to create and manage consist sheets (train formations)
+  So that I can document and plan the composition of trains for my collection or operations.
+* As a collector
+  I want to add, remove, and reorder rolling stock in a consist
+  So that I can accurately represent the sequence and makeup of a train.
+* As a collector
+  I want to specify details for each rolling stock in a consist (category, subcategory, service level, road name/number)
+  So that my consist sheets are detailed and historically accurate.
+* As a collector
+  I want to duplicate an existing consist as a template
+  So that I can quickly create similar train formations with minor changes.
+
+### **5.6 Shop Management**
 * As a collector
   I want to add, edit, or remove shops
   So that I can track where I buy or want to buy items.
@@ -253,12 +303,12 @@ RustHouse is a **standalone desktop application** with local data storage using 
   I want to mark shops as favourites
   So that I can quickly select them when adding collection or wish list items.
 
-### **5.6 Preferences**
+### **5.7 Preferences**
 * As a collector
   I want to set my preferred currency, measurement system, favourite scales, railway companies, and eras
   So that the app matches my personal collecting interests.
 
-### **5.7 Import/Export**
+### **5.8 Import/Export**
 * As a collector
   I want to export my collection or wish lists to CSV or JSON
   So that I can back up or share my data.
@@ -495,6 +545,14 @@ RustHouse is a **standalone desktop application** with local data storage using 
   * `NEM_362` – Universal close coupler pocket (widely used in H0)
   * `NEM_363` – Coupler pocket for G scale (1:22.5)
   * `NEM_365` – Coupler pocket for narrow gauge and special applications
+
+### 6.24 Consist Type
+* Name: Consist Type
+* Description: The type of train formation represented by a consist.
+* Values:
+  * `HIGH_SPEED_TRAIN` – High speed train consist
+  * `PASSENGER_TRAIN` – Passenger train consist
+  * `FREIGHT_TRAIN` – Freight train consist
 
 ## **7. E/R Model**
 
@@ -775,6 +833,33 @@ FavouriteEra(
     era TEXT NOT NULL, -- string/enum, e.g., 'III', 'IV', 'V'
     created_at TEXT NOT NULL,
     UNIQUE(collector_id, era)
+)
+
+Consist(
+    id TEXT PRIMARY KEY,                -- URN: urn:consist:{name}
+    name TEXT NOT NULL,                 -- Name of the consist
+    consist_type TEXT NOT NULL,         -- enum: High Speed Train, Passenger Train, Freight Train
+    era TEXT NOT NULL,                  -- Era or epoch (e.g., III, IV, V)
+    year_start INTEGER,                 -- Year when the consist was first run
+    year_end INTEGER,                   -- Year when the consist was last run (or null for a single year)
+    route_origin TEXT,                  -- Starting location
+    route_destination TEXT,             -- Destination location
+    description TEXT,                   -- Optional
+    created_at TEXT NOT NULL,           -- ISO 8601 timestamp
+    last_modified_at TEXT,              -- ISO 8601 timestamp, optional
+    version INTEGER NOT NULL DEFAULT 1
+)
+
+ConsistRollingStock(
+    id INTEGER PRIMARY KEY,
+    consist_id TEXT NOT NULL REFERENCES Consist(id),
+    position INTEGER NOT NULL,          -- Order in the consist
+    category TEXT NOT NULL,             -- Locomotive, Passenger Car, Freight Car
+    subcategory TEXT,                   -- e.g., postal car, sleeper, diner, etc.
+    service_level TEXT,                 -- For passenger cars
+    road_name TEXT NOT NULL,
+    road_number TEXT,                   -- Optional
+    notes TEXT                          -- Optional
 )
 
 ```

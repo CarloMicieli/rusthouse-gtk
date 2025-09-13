@@ -58,7 +58,125 @@ RustHouse is a **standalone desktop application** with local data storage using 
 * SQLite database file is stored in the user’s home directory (e.g., `~/.local/share/rusthouse/rusthouse.sqlite` on Linux, `%USERPROFILE%\\AppData\\Local\\rusthouse\\rusthouse.sqlite` on Windows).
 * Optional CSV import/export requires basic knowledge of CSV files.
 
-### **2.5 Data Seeding for Scales and Railway Companies**
+### **2.5 UX Requirements**
+
+The application UI is structured into three main areas, each with a clear purpose:
+
+- **Header bar**: Provides access to global actions and application-wide controls. Always visible at the top of the window.
+- **Sidebar**: Serves as the primary navigation, allowing users to move between major sections of the app.
+- **Content area**: Displays the details and management interfaces for the selected section or item.
+
+**Interaction principles:**
+- The sidebar helps users navigate to the desired section.
+- The header bar offers quick access to global actions, regardless of the current view.
+- The content area is focused on managing, editing, and viewing details.
+
+#### **2.5.1 The header bar**
+
+The header bar gives users quick access to global actions without cluttering navigation. 
+
+Header Bar (Top of App Window)
+* **Left side (branding / identity)**
+  * App logo + name → anchors orientation (e.g., RustHouse).
+* **Center (navigation / context)**
+  * Page title / breadcrumb → dynamically updates (e.g., Collection › Rolling Stock › Locomotives).
+  * Optional: search input field (quick search by model name, type, or decoder address).
+* **Right side (global actions)**
+  * ➕ Add button (primary action) → main entry point for adding items:
+  * Dropdown / split button:
+    * Add Rolling Stock
+    * Add Accessory
+    * Add to Wishlist
+
+The header bar follows GNOME HIG conventions for application top bars:
+
+- **Left (App Identity):**
+  - Application icon and name, providing orientation and branding.
+- **Center (Context):**
+  - Page title or breadcrumb, updating dynamically to reflect the current view (e.g., “Collection › Rolling Stock › Locomotives”).
+  - (Optional) Search field for quick filtering by model name, type, or decoder address.
+- **Right (Global Actions):**
+  - **Add** button (primary action), using a GNOME-style button with a drop-down menu for:
+    - Add Rolling Stock
+    - Add Accessory
+    - Add to Wishlist
+    - Add Consist
+- **Notifications** (bell icon), for maintenance reminders, wishlist alerts, or digitalization notices.
+- **Preferences/About** (gear or menu icon), opening a GNOME-compliant preferences dialog.
+
+**Adding Models:**
+- The global “Add” button is always visible in the header bar, opening a modal dialog for adding new items. The dialog is context-aware (e.g., preselects “Add to Wishlist” if viewing a wishlist).
+- Contextual add actions are also available within sections (e.g., “Add Locomotive” in Rolling Stock, “Add to this Wishlist” in Wishlists, “Create Consist” in Consists), following GNOME’s principle of providing actions close to where they are needed.
+
+**Accessibility and Consistency:**
+- All header bar actions must be accessible via keyboard and screen reader.
+- Use standard GNOME icons and button styles for clarity and consistency.
+
+**Design Rationale:**
+- The header bar provides global actions and context, always accessible from any view.
+
+**Sidebar Navigation**
+
+* 🏠 **Dashboard**
+  * Overview
+  * Recent Activity
+* 📂 **Collection**
+  * Rolling Stock
+    * Locomotives
+    * Wagons / Cars
+    * Maintenance Logs (per item)
+    * Digitalization Info (decoder installed, address, type)
+  * Accessories
+    * Tracks
+    * Digital Decoders
+    * Scenery
+* ⭐ **Wish Lists**
+  * Wishlist 1
+  * Wishlist 2
+  * … (user-defined multiple lists)
+* 🚆 **Consists (Train Formations)**
+  * All Consists
+  * Create New Consist
+  * Edit Consist
+* 🔍 **Search / Filter**
+  * Search by Name, Type, Decoder Address
+  * Filter by Maintenance Status, Ownership Status, Digitalization Status
+* 📊 **Reports / Stats**
+  * Collection Value
+  * Maintenance Schedule
+  * Digitalization Overview
+* ⚙️ **Settings**
+  * Preferences
+  * Import / Export
+
+The sidebar uses a GNOME-style navigation panel, providing clear, accessible access to all major sections:
+- **Dashboard**: Overview of collection statistics and recent activity.
+- **Collection**: Access to all owned items, with sub-sections for Rolling Stock, Locomotives, Wagons/Cars, Maintenance Logs, and Digitalization Info.
+- **Accessories**: Tracks, Digital Decoders, Scenery.
+- **Wish Lists**: User-defined lists for planned acquisitions.
+- **Consists**: Train formations, with options to view, create, or edit consists.
+- **Search/Filter**: Global search and filtering tools.
+- **Reports/Stats**: Collection value, maintenance schedule, digitalization overview.
+- **Settings**: App preferences, import/export, and other configuration.
+
+**Sidebar Design Principles:**
+- Top-level navigation items use both icons and labels for clarity, following GNOME HIG.
+- Expandable submenus are used for detailed navigation, but limited to two levels to avoid complexity.
+- When collapsed, the sidebar shows only icons; labels appear on hover or when expanded.
+- Frequent actions (Collection, Wish Lists, Consists) are placed at the top; supportive tools (Search, Reports) in the middle; Settings at the bottom, separated by a divider.
+- Use standard GNOME icons and visual hierarchy (bold section headers, background tints for grouping).
+- All navigation and actions are accessible via keyboard and screen reader.
+- Badge counters (e.g., maintenance due) may be shown for quick status.
+
+**Interaction and Accessibility:**
+- Sidebar navigation is always visible and can be collapsed for a compact view.
+- Section headers and expandable submenus follow GNOME conventions for grouping and indentation.
+- Settings are visually separated at the bottom, following GNOME’s standard layout.
+
+**Rationale:**
+- The sidebar reflects the main mental models of the app, using clear labels for domain-specific sections and icons for universal actions, in line with GNOME HIG best practices.
+
+### **2.6 Data Seeding for Scales and Railway Companies**
 
 * The application must not require the user to manually create or edit scales or railway companies.
 * At startup, the application must seed the database with a predefined list of scales and railway companies, read from a data set in the **Avro** format bundled with the application binary.
@@ -68,7 +186,7 @@ RustHouse is a **standalone desktop application** with local data storage using 
   * Update the entity if it exists but has an older version than the seed data.
 * The seed data file must be maintained as part of the application source and included in all builds and distributions.
 
-#### **2.5.1 Advantages of using Avro over text-based formats (e.g., JSON)**
+#### **2.6.1 Advantages of using Avro over text-based formats (e.g., JSON)**
 
 * Avro is a compact, binary format, resulting in smaller file sizes and faster read/write operations.
 * Avro enforces a strict schema, ensuring data consistency and validation at both read and write time.
